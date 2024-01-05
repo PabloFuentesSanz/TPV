@@ -9,6 +9,7 @@ import ModalTable from './ModalTable';
 import { Button, Tab, Tabs, useDisclosure } from '@nextui-org/react';
 import { toast } from 'react-hot-toast';
 import AddSectionModal from './AddSectionModal';
+import { Typography } from '@mui/material';
 
 function FloorPlanEditor() {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -148,10 +149,11 @@ function FloorPlanEditor() {
   return (
     <>
       {Object.keys(sections).length === 0 ? (
-        <div className='flex w-full justify-center full-height items-center'>
-        <Button onClick={() => setIsAddSectionModalOpen(true)}>
-          Añadir Sección
-        </Button>
+        <div className="flex flex-col gap-5 w-full justify-center full-height items-center">
+          <Typography>Aún no hay ningún sección creada</Typography>
+          <Button onClick={() => setIsAddSectionModalOpen(true)}>
+            Añadir Sección
+          </Button>
         </div>
       ) : (
         <DndProvider

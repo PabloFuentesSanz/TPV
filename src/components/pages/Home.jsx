@@ -8,13 +8,15 @@ import {
   Link,
   Image,
 } from '@nextui-org/react';
+import ComandaButtonCard from '../Home/ComandaButtonCard';
+import MesasProgressCard from '../Home/MesasProgressCard';
 
 function Home() {
   return (
     <>
       <div className="flex w-full justify-between p-10 gap-10">
-        <Card className="h-96 w-1/2"></Card>
-        <Card className="h-96 w-1/2"></Card>
+        <ComandaButtonCard/>
+        <MesasProgressCard  mesasVacias={3} mesasOcupadas={6} />
       </div>
       <div className='flex w-full p-10 pt-0'>
         <Card className="h-80 w-full"></Card>

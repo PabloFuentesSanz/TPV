@@ -73,7 +73,7 @@ const DraggableTable = ({ table, onDragStop, onResizeStop, onClick }) => {
         {nombreMesa} <br />
         {tipoMesa !== 'muro' && (
           <div className='flex'>
-            <RestaurantIcon />
+            <RestaurantIcon fontSize='small'/>
             {capacidad}
           </div>
         )}

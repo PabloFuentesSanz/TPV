@@ -8,102 +8,105 @@ import {
   Button,
   Input,
 } from '@nextui-org/react';
-function ModalTable({ isOpen, onOpenChange, table, onSave, onDelete }) {
+import { toast } from 'react-hot-toast';
+
+function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate }) {
   const [formData, setFormData] = useState({
-    numeroMesa: table?.numeroMesa || '', 
-    capacidad: table?.capacidad || '',
-    // Agrega aquí otras propiedades necesarias
+    nombreMesa: '',
+    tipoMesa: '',
+    capacidad: '',
   });
 
   useEffect(() => {
-    if (table) {
+    if (tableData) {
       setFormData({
-        numeroMesa: table.numeroMesa || '',
-        capacidad: table.capacidad || '',
-        // Agrega aquí otras propiedades
+        nombreMesa: tableData.nombreMesa || '',
+        tipoMesa: tableData.tipoMesa || '',
+        capacidad: tableData.capacidad || '',
       });
+    } else {
+      setFormData({ nombreMesa: '', tipoMesa: '', capacidad: '' });
     }
-  }, [table]);
+  }, [tableData, isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setFormData({
-        numeroMesa: table?.numeroMesa || '',
-        capacidad: table?.capacidad || '',
-        // Agrega aquí otras propiedades necesarias
-      });
-    }
-  }, [isOpen, table]);
-
-  // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDelete = () => {
-    onDelete(table.id);
-    onOpenChange(false);
+  const handleSave = () => {
+    if (!formData.nombreMesa || !formData.tipoMesa || (formData.tipoMesa !== 'muro' && !formData.capacidad)) {
+      toast.error('Por favor, completa todos los campos necesarios.');
+      return;
+    }
+    onSave(formData);
+    onClose();
   };
 
-  // Guardar los cambios
-  const handleSave = () => {
-    const updatedTable = {
-      ...table,
-      ...formData,
-    };
+  const handleDelete = () => {
+    onDelete(tableData.id);
+    onClose();
+  };
 
-    onSave(updatedTable);
+  const handleDuplicate = () => {
+    onDuplicate(tableData.id);
+    onClose();
   };
 
   return (
-    <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Administar Espacio
-              </ModalHeader>
-              <ModalBody>
-                <Input
-                  label="Número de Mesa"
-                  name="numeroMesa"
-                  type="number"
-                  min={0}
-                  value={formData.numeroMesa}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Capacidad"
-                  name="capacidad"
-                  type="number"
-                  min={1}
-                  value={formData.capacidad}
-                  onChange={handleChange}
-                />
-                {/* Agrega aquí más campos según sea necesario */}
-              </ModalBody>
-              <ModalFooter className="flex w-full justify-between">
-                <div>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cerrar
-                  </Button>
-                </div>
-                <div className="flex space-x-1">
-                  <Button color="danger" onPress={handleDelete}>
-                    Borrar
-                  </Button>
-                  <Button color="primary" onPress={handleSave}>
-                    Guardar
-                  </Button>
-                </div>
-              </ModalFooter>
-            </>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalContent>
+        <ModalHeader>{tableData ? 'Editar Mesa' : 'Añadir Mesa'}</ModalHeader>
+        <ModalBody>
+          <Input
+            label="Nombre de Mesa"
+            name="nombreMesa"
+            value={formData.nombreMesa}
+            onChange={handleChange}
+          />
+          <select
+            name="tipoMesa"
+            value={formData.tipoMesa}
+            onChange={handleChange}
+            style={{ margin: '10px 0', padding: '10px' }}
+          >
+            <option value="">Selecciona Tipo de Mesa</option>
+            <option value="cuadrada">Mesa Cuadrada</option>
+            <option value="redonda">Mesa Redonda</option>
+            <option value="muro">Muro</option>
+          </select>
+          {(formData.tipoMesa == 'cuadrada' || formData.tipoMesa == 'redonda'  ) && (
+            <Input
+              label="Número de Comensales"
+              name="capacidad"
+              type="number"
+              value={formData.capacidad}
+              onChange={handleChange}
+            />
           )}
-        </ModalContent>
-      </Modal>
-    </>
+        </ModalBody>
+        <ModalFooter className="flex justify-between">
+          <Button color="danger" variant="light" onPress={onClose}>
+            Cerrar
+          </Button>
+          <div className="flex space-x-1">
+            {tableData && (
+              <>
+                <Button color="danger" onPress={handleDelete}>
+                  Borrar Mesa
+                </Button>
+                <Button color="secondary" onPress={handleDuplicate}>
+                  Duplicar
+                </Button>
+              </>
+            )}
+            <Button color="primary" onPress={handleSave}>
+              {tableData ? 'Guardar' : 'Crear'}
+            </Button>
+          </div>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
 

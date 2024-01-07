@@ -1,219 +1,203 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { DndProvider } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import DropZone from './DropZone';
-import MovableTable from './MovableTable';
-import AsideEditor from './AsideEditor';
+// FloorPlanEditor.js
+import React, { useState } from 'react';
+import DraggableTable from './DraggableTable';
+import { Button, Tabs, Tab, table } from '@nextui-org/react';
 import ModalTable from './ModalTable';
-import { Button, Tab, Tabs, useDisclosure } from '@nextui-org/react';
-import { toast } from 'react-hot-toast';
 import AddSectionModal from './AddSectionModal';
-import { Typography } from '@mui/material';
+import { toast } from 'react-hot-toast';
 
-function FloorPlanEditor() {
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [newSectionName, setNewSectionName] = useState('');
-  const [isAddSectionModalOpen, setIsAddSectionModalOpen] = useState(false);
-
+const FloorPlanEditor = () => {
   const [sections, setSections] = useState({});
+  const [selectedSection, setSelectedSection] = useState('');
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewSectionModalOpen, setIsNewSectionModalOpen] = useState(false);
+  const [newSectionName, setNewSectionName] = useState('');
 
-  const [selectedSection, setSelectedSection] = useState(null);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  // Funciones para manipulación de mesas
+  const onDragStop = (tableId, d) => {
+    const updatedTables = sections[selectedSection].map((table) => {
+      if (table.id === tableId) {
+        return { ...table, position: { x: d.x, y: d.y } };
+      }
+      return table;
+    });
+    setSections({ ...sections, [selectedSection]: updatedTables });
+  };
 
-  const selectedSectionRef = useRef(selectedSection);
+  const onResizeStop = (tableId, size, position) => {
+    const updatedTables = sections[selectedSection].map((table) => {
+      if (table.id === tableId) {
+        return { ...table, dimension: size, position };
+      }
+      return table;
+    });
+    setSections({ ...sections, [selectedSection]: updatedTables });
+  };
 
-  useEffect(() => {
-    selectedSectionRef.current = selectedSection;
-  }, [selectedSection]);
+  const addNewTable = () => {
+    console.log('hola');
+    // Comprueba si hay una sección seleccionada
+    if (!selectedSection) {
+      toast.error('Por favor, selecciona una sección primero.');
+      return;
+    }
+    // Abre el modal
+    setIsModalOpen(true);
+  };
 
-  const dropzoneRef = useRef(null);
+  const saveTableData = (formData) => {
+    // Validación de los datos del formulario
+    if (
+      !formData.nombreMesa.trim() ||
+      (formData.tipoMesa !== 'muro' && !formData.capacidad)
+    ) {
+      toast.error('Por favor, completa todos los campos necesarios.');
+      return;
+    }
 
-  const addSection = (sectionName) => {
-    setSections((prev) => ({ ...prev, [sectionName]: [] }));
-    setSelectedSection(sectionName);
+    // Verificar si el nombre de la mesa ya existe en la sección actual
+    const nombreExiste = sections[selectedSection]?.some(
+      (t) => t.nombreMesa === formData.nombreMesa && t.id !== selectedTable?.id
+    );
+    if (nombreExiste) {
+      toast.error('Ya existe una mesa con ese nombre en esta sección.');
+      return;
+    }
+
+    // Determinar si estamos añadiendo una nueva mesa o actualizando una existente
+    if (selectedTable) {
+      console.log(selectedTable);
+      // Actualizar una mesa existente
+      const updatedTables = sections[selectedSection].map((table) => {
+        if (table.id === selectedTable.id) {
+          return { ...table, ...formData };
+        }
+        return table;
+      });
+      setSections({ ...sections, [selectedSection]: updatedTables });
+    } else {
+      console.log('hola222');
+      // Añadir una nueva mesa
+      const newTable = {
+        id: `table-${Date.now()}`, // Genera un ID único basado en el tiempo actual
+        nombreMesa: formData.nombreMesa,
+        tipoMesa: formData.tipoMesa,
+        capacidad: formData.tipoMesa !== 'muro' ? formData.capacidad : null,
+        position: { x: 10, y: 10 }, // Posición inicial arbitraria
+        dimension: { width: 100, height: 100 }, // Tamaño inicial
+      };
+      setSections({
+        ...sections,
+        [selectedSection]: [...sections[selectedSection], newTable],
+      });
+    }
+
+    setIsModalOpen(false); // Cerrar el modal después de guardar
+    setSelectedTable(null); // Resetea la mesa seleccionada
+  };
+
+  const deleteTable = (tableId) => {
+    const updatedTables = sections[selectedSection].filter(
+      (table) => table.id !== tableId
+    );
+    setSections({ ...sections, [selectedSection]: updatedTables });
+    setIsModalOpen(false);
   };
 
   const handleTableClick = (table) => {
     setSelectedTable(table);
-    onOpen();
+    setIsModalOpen(true);
   };
 
-  let idCounter = 0;
-  const generateId = () => {
-    return `table-${Date.now()}-${idCounter++}`;
-  };
-
-  const addTable = (type, position) => {
-    const newTable = {
-      id: generateId(),
-      type,
-      position,
-    };
-
-    setSections((prevSections) => ({
-      ...prevSections,
-      [selectedSectionRef.current]: [
-        ...prevSections[selectedSectionRef.current],
-        newTable,
-      ],
-    }));
-  };
-
-  const deleteTable = (tableId) => {
-    setSections((prevSections) => {
-      // Obtén todas las mesas de la sección actual, excepto la que se va a eliminar
-      const updatedTables = prevSections[selectedSectionRef.current].filter(
-        (table) => table.id !== tableId
-      );
-
-      // Actualiza la sección actual con las mesas restantes
-      return {
-        ...prevSections,
-        [selectedSectionRef.current]: updatedTables,
-      };
-    });
-  };
-
-  const updateTable = (updatedTable) => {
-    const isDuplicate = sections[selectedSectionRef.current].some(
-      (table) =>
-        table.id !== updatedTable.id &&
-        table.numeroMesa === updatedTable.numeroMesa
-    );
-
-    if (isDuplicate) {
-      toast.error('Ya existe una mesa con ese número en esta sección.');
+  const addNewSection = (sectionName) => {
+    if (sections[sectionName]) {
+      toast.error('Ya existe una sección con ese nombre.');
       return;
     }
-
-    setSections((prevSections) => ({
-      ...prevSections,
-      [selectedSectionRef.current]: prevSections[
-        selectedSectionRef.current
-      ].map((table) => (table.id === updatedTable.id ? updatedTable : table)),
-    }));
-    onOpenChange(false);
+    setSections({ ...sections, [sectionName]: [] });
+    setSelectedSection(sectionName);
+    setIsNewSectionModalOpen(false);
   };
 
-  function isWithinBounds(dropzoneRect, newPosition) {
-    return (
-      newPosition.x >= 0 &&
-      newPosition.y >= 0 &&
-      newPosition.x <= dropzoneRect.width - 100 &&
-      newPosition.y <= dropzoneRect.height - 100
+  const duplicateTable = (tableId) => {
+    const sectionTables = sections[selectedSection];
+    const tableToDuplicate = sectionTables.find(
+      (table) => table.id === tableId
     );
-  }
+    if (!tableToDuplicate) return;
 
-  const moveTable = (id, delta) => {
-    setSections((prevSections) => {
-      const updatedTables = prevSections[selectedSectionRef.current].map(
-        (table) => {
-          if (table.id === id) {
-            const dropzoneRect = dropzoneRef.current.getBoundingClientRect();
-            const newPosition = {
-              x: table.position.x + delta.x,
-              y: table.position.y + delta.y,
-            };
+    const duplicatedTable = {
+      ...tableToDuplicate,
+      id: `table-${Date.now()}`,
+      nombreMesa: `${tableToDuplicate.nombreMesa}-copia`,
+      position: {
+        x: tableToDuplicate.position.x + 20, // Mover ligeramente en el eje X
+        y: tableToDuplicate.position.y + 20, // Mover ligeramente en el eje Y
+      },
+    };
 
-            if (isWithinBounds(dropzoneRect, newPosition)) {
-              return { ...table, position: newPosition };
-            }
-          }
-          return table;
-        }
-      );
-
-      return { ...prevSections, [selectedSectionRef.current]: updatedTables };
+    setSections({
+      ...sections,
+      [selectedSection]: [...sectionTables, duplicatedTable],
     });
-  };
-
-  const onDrop = (typeOrId, isNew, positionOrDelta) => {
-    if (isNew) {
-      // Añadir nueva mesa
-      addTable(typeOrId, positionOrDelta);
-    } else {
-      // Mover mesa existente
-      moveTable(typeOrId, positionOrDelta);
-    }
   };
 
   const handleTabChange = (key) => {
-    if (selectedSection && key === 'add') {
-      setIsAddSectionModalOpen(true);
-    } else if (key) {
-      setSelectedSection(key);
+    console.log("",key)
+    if (key === 'add') {
+      setIsNewSectionModalOpen(true); // Abre el modal para añadir una nueva sección
+    } else {
+      setSelectedSection(key); // Cambia la sección seleccionada
     }
   };
 
   return (
-    <>
+    <div className="full-height">
       {Object.keys(sections).length === 0 ? (
-        <div className="flex flex-col gap-5 w-full justify-center full-height items-center">
-          <Typography>Aún no hay ningún sección creada</Typography>
-          <Button onClick={() => setIsAddSectionModalOpen(true)}>
-            Añadir Sección
-          </Button>
-        </div>
+        <Button onClick={() => setIsNewSectionModalOpen(true)}>
+          Añadir Sala
+        </Button>
       ) : (
-        <DndProvider
-          backend={HTML5Backend}
-          options={{ enableMouseEvents: true }}
-        >
-          <div className="flex w-full full-height">
-            <Tabs
-              value={selectedSection}
-              aria-label="Options"
-              onSelectionChange={handleTabChange}
-            >
-              {Object.keys(sections).map((sectionName) => (
-                <Tab key={sectionName} title={sectionName} />
-              ))}
+        <>
+          <Button onClick={addNewTable}>Añadir Mesa</Button>
 
-              <Tab title="+" key="add" />
-            </Tabs>
-
-            {/* Renderiza el DropZone y la barra lateral */}
-            <div className="flex w-full full-height">
-              {selectedSection && sections[selectedSection] && (
-                <DropZone ref={dropzoneRef} onDrop={onDrop}>
-                  {sections[selectedSection].map((table) => (
-                    <MovableTable
-                      key={table.id}
-                      id={table.id}
-                      type={table.type}
-                      position={table.position}
-                      moveTable={moveTable}
-                      onClick={handleTableClick}
-                    />
-                  ))}
-                </DropZone>
-              )}
-              <AsideEditor addTable={addTable} />
-            </div>
+          <Tabs value={selectedSection} onSelectionChange={handleTabChange}>
+            {Object.keys(sections).map((section) => (
+              <Tab key={section} value={section} title={section} />
+            ))}
+            <Tab title="+" value="add" key="add"/>
+          </Tabs>
+          <div className="workspace">
+            {sections[selectedSection]?.map((table) => (
+              <DraggableTable
+                key={table.id}
+                table={table}
+                onDragStop={onDragStop}
+                onResizeStop={onResizeStop}
+                onClick={() => handleTableClick(table)}
+              />
+            ))}
           </div>
-        </DndProvider>
+        </>
       )}
       <AddSectionModal
-        isOpen={isAddSectionModalOpen}
-        onOpenChange={setIsAddSectionModalOpen}
+        isOpen={isNewSectionModalOpen}
+        onOpenChange={setIsNewSectionModalOpen}
         newSectionName={newSectionName}
         setNewSectionName={setNewSectionName}
-        addSection={addSection}
+        addSection={addNewSection}
       />
-      {selectedTable && (
-        <ModalTable
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          table={sections[selectedSection].find(
-            (t) => t.id === selectedTable.id
-          )}
-          onSave={updateTable}
-          onDelete={deleteTable}
-        />
-      )}
-    </>
+      <ModalTable
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        tableData={selectedTable}
+        onSave={saveTableData}
+        onDelete={deleteTable}
+        onDuplicate={duplicateTable}
+      />
+    </div>
   );
-}
+};
 
 export default FloorPlanEditor;

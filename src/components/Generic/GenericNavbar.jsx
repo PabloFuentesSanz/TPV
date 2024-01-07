@@ -11,8 +11,10 @@ import {
   NavbarMenuItem,
 } from '@nextui-org/react';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import MapIcon from '@mui/icons-material/Map';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import logo from '../../assets/img/logo.png';
 
 function GenericNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,25 +50,27 @@ function GenericNavbar() {
         <NavbarItem>
           <Sidebar />
         </NavbarItem>
-        <NavbarItem>
-          <Button onClick={goBack}><ArrowBackIosIcon/></Button>
-        </NavbarItem>
+        {/*<NavbarItem>
+          <Button onClick={goBack}>
+            <ArrowBackIosIcon />
+          </Button>
+  </NavbarItem>*/}
         <NavbarBrand>
-          <p className="font-bold text-inherit">TPV Gestión</p>
+          <img src={logo} alt="Logotipo de Anfitrión" className="h-20"  onClick={goBack}/>{' '}
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        
-      </NavbarContent>
+      <NavbarContent
+        className="hidden sm:flex gap-4"
+        justify="center"
+      ></NavbarContent>
       <NavbarContent justify="end">
-       
         <NavbarItem>
           <Button
             color="secondary"
             onClick={() => navigate('/floorplan-editor')}
           >
-            Editar Espacio
+            <MapIcon /> Editar Plano
           </Button>
         </NavbarItem>
       </NavbarContent>

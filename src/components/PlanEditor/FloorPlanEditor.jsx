@@ -5,6 +5,9 @@ import { Button, Tabs, Tab, table } from '@nextui-org/react';
 import ModalTable from './ModalTable';
 import AddSectionModal from './AddSectionModal';
 import { toast } from 'react-hot-toast';
+import { Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 const FloorPlanEditor = () => {
   const [sections, setSections] = useState({});
@@ -13,6 +16,7 @@ const FloorPlanEditor = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNewSectionModalOpen, setIsNewSectionModalOpen] = useState(false);
   const [newSectionName, setNewSectionName] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   // Funciones para manipulación de mesas
   const onDragStop = (tableId, d) => {
@@ -105,21 +109,6 @@ const FloorPlanEditor = () => {
     setIsModalOpen(false);
   };
 
-  const handleTableClick = (table) => {
-    setSelectedTable(table);
-    setIsModalOpen(true);
-  };
-
-  const addNewSection = (sectionName) => {
-    if (sections[sectionName]) {
-      toast.error('Ya existe una sección con ese nombre.');
-      return;
-    }
-    setSections({ ...sections, [sectionName]: [] });
-    setSelectedSection(sectionName);
-    setIsNewSectionModalOpen(false);
-  };
-
   const duplicateTable = (tableId) => {
     const sectionTables = sections[selectedSection];
     const tableToDuplicate = sectionTables.find(
@@ -143,31 +132,116 @@ const FloorPlanEditor = () => {
     });
   };
 
+  const handleTableClick = (table) => {
+    setSelectedTable(table);
+    setIsModalOpen(true);
+  };
+
+  const addNewSection = (sectionName) => {
+    if (sections[sectionName]) {
+      toast.error('Ya existe una sección con ese nombre.');
+      return;
+    }
+    setSections({ ...sections, [sectionName]: [] });
+    setSelectedSection(sectionName);
+    setIsNewSectionModalOpen(false);
+  };
+
+  const updateSection = (sectionName) => {
+    const updatedSections = { ...sections };
+    updatedSections[sectionName] = updatedSections[selectedSection];
+    delete updatedSections[selectedSection];
+
+    setSections(updatedSections);
+    setSelectedSection(sectionName);
+    setIsNewSectionModalOpen(false);
+  };
+
+  const deleteSection = () => {
+    const updatedSections = { ...sections };
+    delete updatedSections[selectedSection];
+
+    setSections(updatedSections);
+    setSelectedSection('');
+    setIsNewSectionModalOpen(false);
+  };
+
+  const duplicateSection = () => {
+    if (!selectedSection || !sections[selectedSection]) {
+      toast.error('No se puede duplicar la sección actual.');
+      return;
+    }
+
+    let baseName = selectedSection;
+    let copyNumber = 1;
+    let newSectionName = `${baseName}-copia`;
+    while (sections[newSectionName]) {
+      copyNumber += 1;
+      newSectionName = `${baseName}-copia${copyNumber}`;
+    }
+
+    const duplicatedTables = sections[selectedSection].map((table) => ({
+      ...table,
+      id: `table-${Date.now()}-${Math.random()}`, // Genera un nuevo ID para cada mesa
+    }));
+
+    setSections({
+      ...sections,
+      [newSectionName]: duplicatedTables,
+    });
+
+    setSelectedSection(newSectionName); // Selecciona la nueva sección duplicada
+    setIsNewSectionModalOpen(false); // Cierra el modal
+  };
+
   const handleTabChange = (key) => {
-    console.log("",key)
     if (key === 'add') {
-      setIsNewSectionModalOpen(true); // Abre el modal para añadir una nueva sección
+      setIsEditing(false);
+      setNewSectionName('');
+      setIsNewSectionModalOpen(true);
+    } else if (key === selectedSection) {
+      setIsEditing(true);
+      setNewSectionName(key);
+      setIsNewSectionModalOpen(true);
     } else {
-      setSelectedSection(key); // Cambia la sección seleccionada
+      setSelectedSection(key);
     }
   };
 
   return (
     <div className="full-height">
       {Object.keys(sections).length === 0 ? (
-        <Button onClick={() => setIsNewSectionModalOpen(true)}>
-          Añadir Sala
-        </Button>
+        <div className="flex flex-col w-full full-height justify-center items-center gap-5">
+          <Typography>
+            Actualmente no dispone de ninguna sección en su plano.
+          </Typography>
+          <Button onClick={() => setIsNewSectionModalOpen(true)}>
+            <AddIcon /> Añadir Sección
+          </Button>
+        </div>
       ) : (
         <>
-          <Button onClick={addNewTable}>Añadir Mesa</Button>
-
-          <Tabs value={selectedSection} onSelectionChange={handleTabChange}>
-            {Object.keys(sections).map((section) => (
-              <Tab key={section} value={section} title={section} />
-            ))}
-            <Tab title="+" value="add" key="add"/>
-          </Tabs>
+          <div className="w-[85vw] flex m-auto my-3">
+            <Tabs
+              value={selectedSection}
+              onSelectionChange={handleTabChange}
+              selectedKey={selectedSection}
+            >
+              {Object.keys(sections).map((section) => (
+                <Tab
+                  key={section}
+                  value={section}
+                  title={
+                    <>
+                      {selectedSection === section && <EditIcon fontSize="small"/>}{' '}
+                      {section}
+                    </>
+                  }
+                />
+              ))}
+              <Tab title="+" value="add" key="add" />
+            </Tabs>
+          </div>
           <div className="workspace">
             {sections[selectedSection]?.map((table) => (
               <DraggableTable
@@ -178,6 +252,12 @@ const FloorPlanEditor = () => {
                 onClick={() => handleTableClick(table)}
               />
             ))}
+            <div className="w-full flex justify-end pt-5 pr-5">
+              <Button onClick={addNewTable}>
+                <AddIcon />
+                Añadir Elemento
+              </Button>
+            </div>
           </div>
         </>
       )}
@@ -187,6 +267,10 @@ const FloorPlanEditor = () => {
         newSectionName={newSectionName}
         setNewSectionName={setNewSectionName}
         addSection={addNewSection}
+        updateSection={updateSection}
+        deleteSection={deleteSection}
+        duplicateSection={duplicateSection}
+        isEditing={isEditing}
       />
       <ModalTable
         isOpen={isModalOpen}

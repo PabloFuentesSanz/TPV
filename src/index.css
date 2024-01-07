@@ -18,15 +18,22 @@
   flex-grow: 1;
 }
 
-.full-height{
+.full-height {
   height: calc(100vh - 63px);
 }
 
 .workspace {
-  background-color: lightblue;
+  background-color: #f0f0f0; /* Color de fondo */
+  background-image: linear-gradient(
+      0deg,
+      transparent 24px,
+      rgba(0, 0, 0, 0.2) 25px
+    ),
+    linear-gradient(90deg, transparent 24px, rgba(0, 0, 0, 0.2) 25px);
+  background-size: 25px 25px;
   border-radius: 20px;
   width: 85vw; /* 85% del ancho de la ventana */
-  height: 80vh; /* 80% de la altura de la ventana */
+  height: 75vh; /* 80% de la altura de la ventana */
   margin: auto;
   position: relative; /* Importante para el posicionamiento de las mesas */
 }

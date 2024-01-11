@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Navbar,
   NavbarBrand,
@@ -10,6 +10,7 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from '@nextui-org/react';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import MapIcon from '@mui/icons-material/Map';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +41,7 @@ function GenericNavbar() {
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
-      className="border-b-1 h-[63px]"
+      className="border-b-1 h-[83px]"
     >
       <NavbarContent>
         <NavbarMenuToggle
@@ -56,7 +57,13 @@ function GenericNavbar() {
           </Button>
   </NavbarItem>*/}
         <NavbarBrand>
-          <img src={logo} alt="Logotipo de Anfitrión" className="h-20"  onClick={goBack}/>{' '}
+          <img
+            src={logo}
+            alt="Logotipo de Anfitrión"
+            className="h-20 p-3"
+            onClick={goBack}
+          />
+          {''}
         </NavbarBrand>
       </NavbarContent>
 
@@ -65,6 +72,11 @@ function GenericNavbar() {
         justify="center"
       ></NavbarContent>
       <NavbarContent justify="end">
+        <NavbarItem>
+          <Button color="secondary" onClick={() => navigate('/articulos')}>
+            <RestaurantIcon /> Artículos
+          </Button>
+        </NavbarItem>
         <NavbarItem>
           <Button
             color="secondary"

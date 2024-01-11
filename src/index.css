@@ -19,7 +19,7 @@
 }
 
 .full-height {
-  height: calc(100vh - 63px);
+  height: calc(100vh - 90px);
 }
 
 .workspace {
@@ -32,8 +32,8 @@
     linear-gradient(90deg, transparent 24px, rgba(0, 0, 0, 0.2) 25px);
   background-size: 25px 25px;
   border-radius: 20px;
-  width: 85vw; /* 85% del ancho de la ventana */
-  height: 75vh; /* 80% de la altura de la ventana */
+  width: 1200px;
+  height: 750px;
   margin: auto;
-  position: relative; /* Importante para el posicionamiento de las mesas */
+  position: relative;
 }

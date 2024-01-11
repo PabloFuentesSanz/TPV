@@ -1,14 +1,14 @@
 // FloorPlanEditor.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DraggableTable from './DraggableTable';
-import { Button, Tabs, Tab, table } from '@nextui-org/react';
+import { Button, Tabs, Tab } from '@nextui-org/react';
 import ModalTable from './ModalTable';
 import AddSectionModal from './AddSectionModal';
 import { toast } from 'react-hot-toast';
 import { Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-
+import SaveIcon from '@mui/icons-material/Save';
 const FloorPlanEditor = () => {
   const [sections, setSections] = useState({});
   const [selectedSection, setSelectedSection] = useState('');
@@ -40,13 +40,10 @@ const FloorPlanEditor = () => {
   };
 
   const addNewTable = () => {
-    console.log('hola');
-    // Comprueba si hay una sección seleccionada
     if (!selectedSection) {
       toast.error('Por favor, selecciona una sección primero.');
       return;
     }
-    // Abre el modal
     setIsModalOpen(true);
   };
 
@@ -81,15 +78,14 @@ const FloorPlanEditor = () => {
       });
       setSections({ ...sections, [selectedSection]: updatedTables });
     } else {
-      console.log('hola222');
       // Añadir una nueva mesa
       const newTable = {
-        id: `table-${Date.now()}`, // Genera un ID único basado en el tiempo actual
+        id: `table-${Date.now()}`, 
         nombreMesa: formData.nombreMesa,
         tipoMesa: formData.tipoMesa,
         capacidad: formData.tipoMesa !== 'muro' ? formData.capacidad : null,
-        position: { x: 10, y: 10 }, // Posición inicial arbitraria
-        dimension: { width: 100, height: 100 }, // Tamaño inicial
+        position: { x: 10, y: 10 }, 
+        dimension: { width: 100, height: 100 }, 
       };
       setSections({
         ...sections,
@@ -182,7 +178,7 @@ const FloorPlanEditor = () => {
 
     const duplicatedTables = sections[selectedSection].map((table) => ({
       ...table,
-      id: `table-${Date.now()}-${Math.random()}`, // Genera un nuevo ID para cada mesa
+      id: `table-${Date.now()}-${Math.random()}`,
     }));
 
     setSections({
@@ -190,8 +186,8 @@ const FloorPlanEditor = () => {
       [newSectionName]: duplicatedTables,
     });
 
-    setSelectedSection(newSectionName); // Selecciona la nueva sección duplicada
-    setIsNewSectionModalOpen(false); // Cierra el modal
+    setSelectedSection(newSectionName);
+    setIsNewSectionModalOpen(false);
   };
 
   const handleTabChange = (key) => {
@@ -208,8 +204,54 @@ const FloorPlanEditor = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setSelectedTable(null);
+  };
+
+  // Simula guardar los datos en la API
+  const saveFloorPlanToAPI = async (floorPlanData) => {
+    // Aquí harías la llamada POST a tu API
+    console.log('Guardando plano...', floorPlanData);
+    // Simula una respuesta de la API
+  };
+
+  const handleSaveFloorPlan = async () => {
+    // Preparar datos para enviar a la API
+    const floorPlanData = Object.keys(sections).map((sectionName) => {
+      return {
+        sectionName,
+        tables: sections[sectionName].map((table) => ({
+          id: table.id,
+          nombreMesa: table.nombreMesa,
+          tipoMesa: table.tipoMesa,
+          capacidad: table.capacidad,
+          position: table.position,
+          dimension: table.dimension,
+        })),
+      };
+    });
+
+    // Llamar a la API para guardar los datos
+    try {
+      await saveFloorPlanToAPI(floorPlanData);
+      toast.success('Plano guardado con éxito');
+    } catch (error) {
+      toast.error('Error al guardar el plano');
+    }
+  };
+
+  const containerStyles = {
+    overflow: 'auto',
+    maxWidth: '100%',
+    maxHeight: '87vh',
+    backgroundColor: 'white',
+    padding: '2em',
+    borderRadius: '20px',
+  };
+
   return (
-    <div className="full-height">
+    <div className="full-height flex justify-center items-center">
       {Object.keys(sections).length === 0 ? (
         <div className="flex flex-col w-full full-height justify-center items-center gap-5">
           <Typography>
@@ -221,42 +263,57 @@ const FloorPlanEditor = () => {
         </div>
       ) : (
         <>
-          <div className="w-[85vw] flex m-auto my-3">
-            <Tabs
-              value={selectedSection}
-              onSelectionChange={handleTabChange}
-              selectedKey={selectedSection}
-            >
-              {Object.keys(sections).map((section) => (
-                <Tab
-                  key={section}
-                  value={section}
-                  title={
-                    <>
-                      {selectedSection === section && <EditIcon fontSize="small"/>}{' '}
-                      {section}
-                    </>
-                  }
+          <div style={containerStyles}>
+            <div className="workspace">
+              <div className="w-full flex m-auto my-3 justify-between">
+                <Tabs
+                  value={selectedSection}
+                  onSelectionChange={handleTabChange}
+                  selectedKey={selectedSection}
+                >
+                  {Object.keys(sections).map((section) => (
+                    <Tab
+                      key={section}
+                      value={section}
+                      title={
+                        <>
+                          {selectedSection === section && (
+                            <EditIcon fontSize="small" />
+                          )}{' '}
+                          {section}
+                        </>
+                      }
+                    />
+                  ))}
+                  <Tab title="+" value="add" key="add" />
+                </Tabs>
+                <Button
+                  color="success"
+                  onClick={handleSaveFloorPlan}
+                  className="text-white mt-3 mr-5"
+                >
+                  <SaveIcon />
+                  Guardar Plano
+                </Button>
+              </div>
+              {sections[selectedSection]?.map((table) => (
+                <DraggableTable
+                  key={table.id}
+                  table={table}
+                  onDragStop={onDragStop}
+                  onResizeStop={onResizeStop}
+                  onClick={() => handleTableClick(table)}
                 />
               ))}
-              <Tab title="+" value="add" key="add" />
-            </Tabs>
-          </div>
-          <div className="workspace">
-            {sections[selectedSection]?.map((table) => (
-              <DraggableTable
-                key={table.id}
-                table={table}
-                onDragStop={onDragStop}
-                onResizeStop={onResizeStop}
-                onClick={() => handleTableClick(table)}
-              />
-            ))}
-            <div className="w-full flex justify-end pt-5 pr-5">
-              <Button onClick={addNewTable}>
-                <AddIcon />
-                Añadir Elemento
-              </Button>
+              <div className="w-full h-[670px] flex justify-end  items-end">
+                <Button
+                  onClick={addNewTable}
+                  color="secondary"
+                  className="mr-4"
+                >
+                  <AddIcon />
+                </Button>
+              </div>
             </div>
           </div>
         </>
@@ -274,7 +331,7 @@ const FloorPlanEditor = () => {
       />
       <ModalTable
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleClose}
         tableData={selectedTable}
         onSave={saveTableData}
         onDelete={deleteTable}

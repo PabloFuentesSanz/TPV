@@ -1,13 +1,30 @@
 {
   "name": "tpv-front",
-  "private": true,
+  "productName": "TPV Front",
   "version": "0.0.0",
+  "description": "Una breve descripción de tu aplicación TPV.",
+  "authors": "Tu Nombre",
+  "main": "electron.cjs",
+  "private": true,
   "type": "module",
+  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start-electron": "electron .",
+    "dev:electron": "concurrently -k \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "pack": "electron-builder --dir",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "build": {
+    "appId": "tu.id.de.aplicacion",
+    "win": {
+      "icon": "src/assets/img/logo.png"
+    }
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -15,6 +32,7 @@
     "@mui/icons-material": "^5.15.3",
     "@mui/material": "^5.15.3",
     "@nextui-org/react": "^2.2.9",
+    "electron-squirrel-startup": "^1.0.0",
     "framer-motion": "^10.17.6",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
@@ -26,16 +44,25 @@
     "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.1",
     "eslint": "^8.55.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "wait-on": "^7.2.0"
   }
 }

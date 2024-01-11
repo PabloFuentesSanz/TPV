@@ -1,0 +1,14 @@
+{
+    "build": {
+    "appId": "tu.id.de.aplicación",
+    "mac": {
+        "category": "tu.categoría"
+    },
+    "win": {
+        "target": "nsis"
+    },
+    "linux": {
+        "target": "AppImage"
+    }
+}
+}

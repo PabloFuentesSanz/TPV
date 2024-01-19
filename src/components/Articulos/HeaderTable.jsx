@@ -37,10 +37,10 @@ function HeaderTable({onSearchChange}) {
             }
           />
         </div>
-        <Button>Todos</Button>
-        <Button>Activados</Button>
-        <Button>Desactivados</Button>
-        <Button>Ordenar</Button>
+        <Button className='bg-purple text-white'>Todos</Button>
+        <Button className='bg-purple text-white'>Activados</Button>
+        <Button className='bg-purple text-white'>Desactivados</Button>
+        <Button className='bg-purple text-white'>Ordenar</Button>
       </div>
     </>
   );

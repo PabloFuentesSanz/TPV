@@ -3,6 +3,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 
 const TableDisplay = ({ table, onTableClick }) => {
   const { nombreMesa, tipoMesa, capacidad, position, dimension } = table;
+  const isTable = tipoMesa !== 'muro';
 
   const tableStyle = {
     position: 'absolute',
@@ -22,10 +23,14 @@ const TableDisplay = ({ table, onTableClick }) => {
   };
 
   return (
-    <div style={tableStyle} onClick={() => onTableClick(table)} className='flex flex-col'>
+    <div
+      style={tableStyle}
+      onClick={isTable ? () => onTableClick(table) : () => {}}
+      className="flex flex-col"
+    >
       {nombreMesa}
       <br />
-      {tipoMesa !== 'muro' && (
+      {isTable && (
         <div>
           <RestaurantIcon fontSize="small" />
           {capacidad}

@@ -18,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { allergenImages } from '../../utils/allergens';
 import HeaderTable from './HeaderTable';
 import { useState } from 'react';
+import { Switch } from '@nextui-org/react';
 
 const ItemTable = ({
   items,
@@ -45,14 +46,15 @@ const ItemTable = ({
       <HeaderTable onSearchChange={handleSearchChange} />
       <TableContainer component={Paper}>
         <Table>
-          <TableHead className="bg-slate-300 ">
+          <TableHead className="bg-primary">
             <TableRow>
-              <TableCell>Imagen</TableCell>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Alérgenos</TableCell>
-              <TableCell>PVP</TableCell>
-              <TableCell>Categorías</TableCell>
-              <TableCell>Acciones</TableCell>
+              <TableCell><div className='text-white'>Imagen</div></TableCell>
+              <TableCell><div className='text-white'>Nombre</div></TableCell>
+              <TableCell><div className='text-white'>Alérgenos</div></TableCell>
+              <TableCell><div className='text-white'>PVP</div></TableCell>
+              <TableCell><div className='text-white'>Categorías</div></TableCell>
+              <TableCell><div className='text-white'>En Venta</div></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -99,6 +101,9 @@ const ItemTable = ({
                         );
                       })}
                     </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Switch isDisabled isSelected={item.salableItem}/>
                   </TableCell>
                   <TableCell>
                     <div className="flex content-between gap-4">

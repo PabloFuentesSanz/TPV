@@ -5,15 +5,14 @@ import { Button } from '@nextui-org/react';
 import AddIcon from '@mui/icons-material/Add';
 import CategoriesTable from '../Articulos/CategoriesTable';
 import AddCategoryModal from '../Articulos/AddCategoryModal';
+import { mockedIngredients } from '../../mocks/mockedIngredients';
+import { mockedMenu } from '../../mocks/mockedMenu';
+import { mockedCategories } from '../../mocks/mockedCategories';
 
 const Articulos = () => {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(mockedIngredients.concat(mockedMenu));
   const [selectedItem, setSelectedItem] = useState(null);
-  const [categories, setCategories] = useState({
-    Bebidas: [],
-    Comidas: [],
-    Postres: [],
-  });
+  const [categories, setCategories] = useState(mockedCategories);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,13 +27,16 @@ const Articulos = () => {
 
   const updateCategoriesState = () => {
     const newCategoriesState = { ...categories };
-  
+
     Object.keys(categories).forEach((category) => {
-      newCategoriesState[category] = items
-        .filter((item) => item.categories.includes(category))
-        .map((item) => item.id);
+      newCategoriesState[category] = {
+        ...newCategoriesState[category],
+        items: items
+          .filter((item) => item.categories.includes(category))
+          .map((item) => item.id),
+      };
     });
-  
+
     setCategories(newCategoriesState);
   };
 
@@ -56,7 +58,15 @@ const Articulos = () => {
   };
 
   const handleAddCategory = (newCategory) => {
-    // Lógica para añadir una nueva categoría a la base de datos
+    setCategories((prevCategories) => ({
+      ...prevCategories,
+      [newCategory.name]: {
+        id: newCategory.id,
+        items: [],
+        description: newCategory.description,
+      },
+    }));
+    setShowCategoryModal(false);
   };
 
   const handleCloseModal = () => {
@@ -89,17 +99,17 @@ const Articulos = () => {
 
   const calculatePercentage = (category) => {
     const totalItems = items.length;
-    const itemsInCategory = categories[category].length;
+    const itemsInCategory = categories[category].items.length;
     return (itemsInCategory / totalItems) * 100;
   };
 
   return (
     <div>
       <div className="flex w-full justify-end p-3 gap-3">
-        <Button color="primary" onClick={() => setShowItemModal(true)}>
+        <Button color="secondary" className='text-primary' onClick={() => setShowItemModal(true)}>
           <AddIcon /> Añadir Artículo
         </Button>
-        <Button color="primary" onClick={() => showCategoryModal(true)}>
+        <Button color="secondary" className='text-primary' onClick={() => setShowCategoryModal(true)}>
           <AddIcon /> Añadir Categoría
         </Button>
       </div>
@@ -116,7 +126,10 @@ const Articulos = () => {
           />
           <div className="w.full flex justify-end">
             <div className="w-2/6 mt-5">
-              <CategoriesTable categories={categories} calculatePercentage={calculatePercentage} />
+              <CategoriesTable
+                categories={categories}
+                calculatePercentage={calculatePercentage}
+              />
             </div>
           </div>
         </div>
@@ -128,10 +141,12 @@ const Articulos = () => {
           onSave={handleAddItem}
           categories={categories}
           selectedItem={selectedItem}
+          items={items}
         />
       )}
       {showCategoryModal && (
         <AddCategoryModal
+          isOpen={showCategoryModal}
           onClose={() => setShowCategoryModal(false)}
           onSave={handleAddCategory}
         />

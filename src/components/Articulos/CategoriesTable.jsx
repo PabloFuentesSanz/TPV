@@ -25,7 +25,7 @@ function CategoriesTable({ categories, calculatePercentage }) {
               Object.keys(categories).map((category) => (
                 <TableRow key={category}>
                   <TableCell>
-                    <Typography variant="subtitle1">{`${category} (${categories[category].length})`}</Typography>
+                    <Typography variant="subtitle1">{`${category} (${categories[category].items.length})`}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <LinearProgress
@@ -42,7 +42,7 @@ function CategoriesTable({ categories, calculatePercentage }) {
                   colSpan={6}
                   style={{ textAlign: 'center', padding: '5em' }}
                 >
-                  <p>Por el momento no hay ninguna categoría creada.</p>
+                  <p>No hay ninguna categoría creada.</p>
                 </TableCell>
               </TableRow>
             )}

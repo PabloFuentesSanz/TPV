@@ -95,7 +95,7 @@ function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate 
                 <Button color="danger" onPress={handleDelete}>
                   Borrar Mesa
                 </Button>
-                <Button color="secondary" onPress={handleDuplicate}>
+                <Button onPress={handleDuplicate} className='bg-purple text-white'>
                   Duplicar
                 </Button>
               </>

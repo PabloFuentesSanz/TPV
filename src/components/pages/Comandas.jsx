@@ -2,11 +2,14 @@
 import { useState, useEffect } from 'react';
 import TableDisplay from '../Comandas/TableDisplay';
 import { Tabs, Tab } from '@nextui-org/react';
+import OrderModal from '../Comandas/OrderModal';
 
 const Comandas = () => {
   const [sections, setSections] = useState([]);
   const [selectedSection, setSelectedSection] = useState('');
-
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [openOrder, setOpenOrder] = useState(false);
+  
   useEffect(() => {
     // Simulación de fetch de la API
     const fetchData = async () => {
@@ -255,9 +258,17 @@ const Comandas = () => {
   }, []);
 
   const handleTableClick = (table) => {
-    // Lógica para abrir comanda en la mesa seleccionada
-    console.log('Abrir comanda para:', table.nombreMesa);
+    setSelectedTable(table)
+    setOpenOrder(true);
   };
+
+  const handleCloseModal = () => {
+    setSelectedTable(null)
+    setOpenOrder(false)
+
+  }
+
+
   const containerStyles = {
     overflow: 'auto',
     maxWidth: '100%',
@@ -266,7 +277,7 @@ const Comandas = () => {
     overflowY: 'auto',
     backgroundColor: 'white',
     padding: '2em',
-    borderRadius: '20px'
+    borderRadius: '20px',
   };
 
   return (
@@ -296,6 +307,7 @@ const Comandas = () => {
             )}
         </div>
       </div>
+      <OrderModal isOpen={openOrder} onClose={() => handleCloseModal()} table={selectedTable} />
     </div>
   );
 };

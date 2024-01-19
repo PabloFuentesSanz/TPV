@@ -20,8 +20,8 @@ import logo from '../../assets/img/logo.png';
 function GenericNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const goBack = () => {
-    navigate(-1); // Esto navegará hacia atrás en el historial del navegador
+  const goHome = () => {
+    navigate("/"); // Esto navegará hacia atrás en el historial del navegador
   };
 
   const menuItems = [
@@ -60,10 +60,9 @@ function GenericNavbar() {
           <img
             src={logo}
             alt="Logotipo de Anfitrión"
-            className="h-20 p-3"
-            onClick={goBack}
+            className="h-20 p-3 cursor-pointer"
+            onClick={goHome}
           />
-          {''}
         </NavbarBrand>
       </NavbarContent>
 
@@ -73,13 +72,13 @@ function GenericNavbar() {
       ></NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button color="secondary" onClick={() => navigate('/articulos')}>
-            <RestaurantIcon /> Artículos
+          <Button color="primary" onClick={() => navigate('/articulos')} className=''>
+            <RestaurantIcon /> Inventario
           </Button>
         </NavbarItem>
         <NavbarItem>
           <Button
-            color="secondary"
+            color="primary"
             onClick={() => navigate('/floorplan-editor')}
           >
             <MapIcon /> Editar Plano

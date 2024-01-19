@@ -257,7 +257,7 @@ const FloorPlanEditor = () => {
           <Typography>
             Actualmente no dispone de ninguna sección en su plano.
           </Typography>
-          <Button onClick={() => setIsNewSectionModalOpen(true)}>
+          <Button onClick={() => setIsNewSectionModalOpen(true)} color='secondary' className='text-primary'>
             <AddIcon /> Añadir Sección
           </Button>
         </div>
@@ -285,12 +285,12 @@ const FloorPlanEditor = () => {
                       }
                     />
                   ))}
-                  <Tab title="+" value="add" key="add" />
+                  <Tab title="+" value="add" key="add" className='text-2xl flex mt-[-6px]'/>
                 </Tabs>
                 <Button
-                  color="success"
+                  color="secondary"
                   onClick={handleSaveFloorPlan}
-                  className="text-white mt-3 mr-5"
+                  className="text-white mt-3 mr-5 text-primary"
                 >
                   <SaveIcon />
                   Guardar Plano
@@ -308,8 +308,7 @@ const FloorPlanEditor = () => {
               <div className="w-full h-[670px] flex justify-end  items-end">
                 <Button
                   onClick={addNewTable}
-                  color="secondary"
-                  className="mr-4"
+                  className="mr-4 bg-primary text-white"
                 >
                   <AddIcon />
                 </Button>

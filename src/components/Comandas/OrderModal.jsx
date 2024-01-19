@@ -22,7 +22,25 @@ function OrderModal({ isOpen, onClose, table }) {
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
+  const handleIncrementQuantity = (itemId) => {
+    setCurrentOrder(
+      currentOrder.map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
 
+  const handleDecrementQuantity = (itemId) => {
+    setCurrentOrder(
+      currentOrder
+        .map((item) =>
+          item.id === itemId
+            ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
   const handleAddToOrder = (item) => {
     const existingItem = currentOrder.find(
       (orderItem) => orderItem.id === item.id
@@ -48,10 +66,14 @@ function OrderModal({ isOpen, onClose, table }) {
         <ModalHeader>
           <h3 className="text-2xl">Comanda: {table?.nombreMesa}</h3>
         </ModalHeader>
-        <ModalBody className='p-0'>
+        <ModalBody className="p-0">
           <div className="flex w-full">
             <div className="w-1/3">
-              <OrderDetails order={currentOrder} />
+              <OrderDetails
+                order={currentOrder}
+                onIncrementQuantity={handleIncrementQuantity}
+                onDecrementQuantity={handleDecrementQuantity}
+              />
             </div>
             <div className="w-2/3 flex gap-5 flex-wrap">
               {!selectedCategory ? (
@@ -73,12 +95,12 @@ function OrderModal({ isOpen, onClose, table }) {
                   );
                 })
               ) : (
-                <div className='ml-4'>
+                <div className="ml-4 flex-col w-full">
                   <Button onClick={handleBackToCategories} color="primary">
                     <ArrowBackIcon />
                     Categorías
                   </Button>
-                  <div className="flex flex-wrap">
+                  <div className="flex flex-wrap w-full mt-3 gap-4">
                     {items
                       .filter(
                         (item) =>
@@ -88,7 +110,7 @@ function OrderModal({ isOpen, onClose, table }) {
                       .map((item, index) => (
                         <div
                           key={index}
-                          className="w-1/4 p-2"
+                          className="flex w-1/4 p-2 bg-primary text-white h-24 rounded-lg  justify-center items-center"
                           onClick={() => handleAddToOrder(item)}
                         >
                           <h4>{item.name}</h4>

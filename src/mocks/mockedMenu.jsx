@@ -40,6 +40,69 @@ export const mockedMenu = [
       reorderPoint: 0, // No aplicable para producto elaborado
       unitOfMeasure: '', // No aplicable para producto elaborado
       salableItem: true
+    },
+    {
+      id: 'prod-003',
+      name: 'Ensalada Mixta',
+      isElaborate: true,
+      price: 6.50, // Precio de venta al público
+      categories: ['Ensaladas'],
+      description: 'Ensalada César con lechuga romana, pechuga de pollo, crutones y aderezo César',
+      imageUrl: '',
+      selectedAllergens: [],
+      ingredients: [
+        { name: 'Lechuga Romana', amount: 100, unit: 'g', merma: 5 },
+        { name: 'Pechuga de Pollo', amount: 150, unit: 'g', merma: 0 },
+        { name: 'Pan', amount: 50, unit: 'g', merma: 0 },
+        { name: 'Aceite de Oliva', amount: 10, unit: 'ml', merma: 0 },
+        { name: 'Queso Parmesano', amount: 30, unit: 'g', merma: 0 }
+      ],
+      stock: 0, // No aplicable para producto elaborado
+      reorderPoint: 0, // No aplicable para producto elaborado
+      unitOfMeasure: '', // No aplicable para producto elaborado
+      salableItem: true
+    },
+    {
+      id: 'prod-004',
+      name: 'Ensalada de Verano',
+      isElaborate: true,
+      price: 6.50, // Precio de venta al público
+      categories: ['Ensaladas'],
+      description: 'Ensalada César con lechuga romana, pechuga de pollo, crutones y aderezo César',
+      imageUrl: '',
+      selectedAllergens: [],
+      ingredients: [
+        { name: 'Lechuga Romana', amount: 100, unit: 'g', merma: 5 },
+        { name: 'Pechuga de Pollo', amount: 150, unit: 'g', merma: 0 },
+        { name: 'Pan', amount: 50, unit: 'g', merma: 0 },
+        { name: 'Aceite de Oliva', amount: 10, unit: 'ml', merma: 0 },
+        { name: 'Queso Parmesano', amount: 30, unit: 'g', merma: 0 }
+      ],
+      stock: 0, // No aplicable para producto elaborado
+      reorderPoint: 0, // No aplicable para producto elaborado
+      unitOfMeasure: '', // No aplicable para producto elaborado
+      salableItem: true
+    },
+    {
+      id: 'prod-005',
+      name: 'Ensalada Nueva',
+      isElaborate: true,
+      price: 6.50, // Precio de venta al público
+      categories: ['Ensaladas'],
+      description: 'Ensalada César con lechuga romana, pechuga de pollo, crutones y aderezo César',
+      imageUrl: '',
+      selectedAllergens: [],
+      ingredients: [
+        { name: 'Lechuga Romana', amount: 100, unit: 'g', merma: 5 },
+        { name: 'Pechuga de Pollo', amount: 150, unit: 'g', merma: 0 },
+        { name: 'Pan', amount: 50, unit: 'g', merma: 0 },
+        { name: 'Aceite de Oliva', amount: 10, unit: 'ml', merma: 0 },
+        { name: 'Queso Parmesano', amount: 30, unit: 'g', merma: 0 }
+      ],
+      stock: 0, // No aplicable para producto elaborado
+      reorderPoint: 0, // No aplicable para producto elaborado
+      unitOfMeasure: '', // No aplicable para producto elaborado
+      salableItem: true
     }
   ];
   

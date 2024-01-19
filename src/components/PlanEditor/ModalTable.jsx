@@ -54,7 +54,7 @@ function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate 
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={()=>{}} hideCloseButton>
       <ModalContent>
         <ModalHeader>{tableData ? 'Editar Mesa' : 'Añadir Mesa'}</ModalHeader>
         <ModalBody>

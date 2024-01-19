@@ -20,14 +20,13 @@ const OrderDetails = ({ order, onIncrementQuantity, onDecrementQuantity }) => {
           {order.map((item, index) => (
             <li key={index} className="order-item bg-lightAccent text-primary">
               <div className="flex w-full gap-3 ">
-                <div className='flex'>
+                <div className="flex">
                   <Button
                     isIconOnly
                     onClick={() => onDecrementQuantity(item.id)}
                     size="sm"
-                    className='h-full rounded-none'
-                    color='primary'
-
+                    className="h-full rounded-none"
+                    color="primary"
                   >
                     <RemoveIcon />
                   </Button>
@@ -50,8 +49,8 @@ const OrderDetails = ({ order, onIncrementQuantity, onDecrementQuantity }) => {
                     isIconOnly
                     onClick={() => onIncrementQuantity(item.id)}
                     size="sm"
-                    color='primary'
-                    className='h-full rounded-none'
+                    color="primary"
+                    className="h-full rounded-none"
                   >
                     <AddIcon />
                   </Button>

@@ -12,8 +12,8 @@ import toast from 'react-hot-toast';
 // AddSectionModal.js
 function AddSectionModal({
   isOpen,
-  onOpenChange,
   newSectionName,
+  onOpenChange,
   setNewSectionName,
   addSection,
   updateSection,
@@ -49,7 +49,7 @@ function AddSectionModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onClose={()=>{}} hideCloseButton>
       <ModalContent>
         <ModalHeader>
           {isEditing ? 'Editar Sección' : 'Añadir Nueva Sección'}
@@ -76,7 +76,7 @@ function AddSectionModal({
               <Button color="danger" onClick={handleDelete}>
                 Borrar Sección
               </Button>
-              <Button color="secondary"  onClick={handleDuplicate}>
+              <Button className='bg-purple text-white'  onClick={handleDuplicate}>
                 Duplicar
               </Button>
             </>

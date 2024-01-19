@@ -160,6 +160,7 @@ const FloorPlanEditor = () => {
     setSections(updatedSections);
     setSelectedSection('');
     setIsNewSectionModalOpen(false);
+    setIsEditing(false)
   };
 
   const duplicateSection = () => {

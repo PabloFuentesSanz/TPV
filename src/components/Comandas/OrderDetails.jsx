@@ -1,5 +1,5 @@
 import React from 'react';
-import ensaladas from '../../assets/img/categories/comidas.png';
+import ensaladas from '../../assets/img/categories/ensaladas.png';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Button } from '@nextui-org/react';
@@ -10,7 +10,7 @@ const OrderDetails = ({ order, onIncrementQuantity, onDecrementQuantity }) => {
   };
 
   return (
-    <div className=" bg-secondary h-[600px] rounded-lg">
+    <div className="h-[50vh]  overflow-y-auto">
       {order.length === 0 ? (
         <div className="flex w-full h-full justify-center items-center">
           <p>No hay artículos en la comanda.</p>
@@ -18,7 +18,7 @@ const OrderDetails = ({ order, onIncrementQuantity, onDecrementQuantity }) => {
       ) : (
         <ul>
           {order.map((item, index) => (
-            <li key={index} className="order-item bg-lightAccent text-primary">
+            <li key={index} className="order-item bg-secondary text-primary mb-1">
               <div className="flex w-full gap-3 ">
                 <div className="flex">
                   <Button

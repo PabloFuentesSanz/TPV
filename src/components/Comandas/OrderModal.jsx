@@ -11,7 +11,6 @@ import { useState } from 'react';
 import OrderDetails from './OrderDetails';
 import { mockedIngredients } from '../../mocks/mockedIngredients';
 import { mockedMenu } from '../../mocks/mockedMenu';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function OrderModal({ isOpen, onClose, table }) {
   const [categories, setCategories] = useState(mockedCategories);
@@ -57,68 +56,70 @@ function OrderModal({ isOpen, onClose, table }) {
       setCurrentOrder([...currentOrder, { ...item, quantity: 1 }]);
     }
   };
-  const handleBackToCategories = () => {
-    setSelectedCategory(null);
-  };
+
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} hideCloseButton size="full">
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      hideCloseButton
+      size="full"
+      className="p-4"
+    >
       <ModalContent>
-        <ModalHeader>
-          <h3 className="text-2xl">Comanda: {table?.nombreMesa}</h3>
-        </ModalHeader>
         <ModalBody className="p-0">
           <div className="flex w-full">
-            <div className="w-1/3">
+            <div className="w-1/3 border-1">
+              <div className='w-full p-3'>
+                <h3 className="text-2xl">Comanda {table?.nombreMesa}</h3>
+              </div>
               <OrderDetails
                 order={currentOrder}
                 onIncrementQuantity={handleIncrementQuantity}
                 onDecrementQuantity={handleDecrementQuantity}
               />
             </div>
-            <div className="w-2/3 flex gap-5 flex-wrap">
-              {!selectedCategory ? (
-                Object.keys(categories).map((category) => {
-                  //Hacer Componente
-                  return (
-                    <div
-                      className="w-1/6 text-center cursor-pointer  ml-8"
-                      key={category}
-                      onClick={() => handleCategorySelect(category)}
-                    >
-                      <img
-                        src={categories[category].img}
-                        alt=""
-                        className="rounded"
-                      />
-                      <h3 className="text-xl">{category}</h3>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="ml-4 flex-col w-full">
-                  <Button onClick={handleBackToCategories} color="primary">
-                    <ArrowBackIcon />
-                    Categorías
-                  </Button>
-                  <div className="flex flex-wrap w-full mt-3 gap-4">
-                    {items
-                      .filter(
-                        (item) =>
-                          item.categories.includes(selectedCategory) &&
-                          item.salableItem
-                      )
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex w-1/4 p-2 bg-primary text-white h-24 rounded-lg  justify-center items-center"
-                          onClick={() => handleAddToOrder(item)}
-                        >
-                          <h4>{item.name}</h4>
-                        </div>
-                      ))}
-                  </div>
+            <div className="w-2/3 ">
+              <div className="w-full flex flex-wrap gap-3 p-2 pl-7">
+                {Object.keys(categories)
+                  .filter((category) => categories[category].salableCategory)
+                  .map((category) => {
+                    //Hacer Componente
+                    return (
+                      <div
+                        className="w-1/6 text-center cursor-pointer"
+                        key={category}
+                        onClick={() => handleCategorySelect(category)}
+                      >
+                        <img
+                          src={categories[category].img}
+                          alt=""
+                          className="rounded"
+                        />
+                        <h3 className="text-xl">{category}</h3>
+                      </div>
+                    );
+                  })}
+              </div>
+
+              <div className="w-full border-t-1 p-2 pl-7">
+                <div className="flex flex-wrap w-full gap-4">
+                  {items
+                    .filter(
+                      (item) =>
+                        item.categories.includes(selectedCategory) &&
+                        item.salableItem
+                    )
+                    .map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex w-1/6 p-2 bg-primary text-white h-24 rounded-lg  justify-center items-center text-center"
+                        onClick={() => handleAddToOrder(item)}
+                      >
+                        <h4>{item.name}</h4>
+                      </div>
+                    ))}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </ModalBody>

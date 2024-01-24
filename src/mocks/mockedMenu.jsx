@@ -4,7 +4,7 @@ export const mockedMenu = [
       name: 'Pizza Margarita',
       isElaborate: true,
       price: 8.00, // Precio de venta al público
-      categories: ['Comidas'],
+      categories: ['Pizzas'],
       description: 'Pizza Margarita con salsa de tomate casera, mozzarella y albahaca',
       imageUrl: '',
       selectedAllergens: [],

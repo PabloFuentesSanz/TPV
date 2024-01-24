@@ -1,6 +1,5 @@
 import ensalada from '../assets/img/categories/ensaladas.png'
-import comidas from '../assets/img/categories/comidas.png'
-import horneados from '../assets/img/categories/horneados.png'
+import pizzas from '../assets/img/categories/pizzas.png'
 
 export const mockedCategories = {
     "Aceites": {
@@ -67,19 +66,21 @@ export const mockedCategories = {
       id: "cat-011",
       items: ['ing-022'],
       description: "Productos horneados como panes, pasteles, etc.",
-      img: horneados
+      img: pizzas
     },
-    "Comidas": {
+    "Pizzas": {
       id: "cat-012",
       items: ["prod-001"],
       description: "Platillos preparados y listos para servir.",
-      img: comidas
+      img: pizzas,
+      salableCategory: true,
     },
     "Ensaladas": {
       id: "cat-013",
       items: ["prod-002"],
       description: "Diversas ensaladas, desde clásicas hasta innovadoras.",
-      img: ensalada
+      img: ensalada,
+      salableCategory: true,
     }
   };
   

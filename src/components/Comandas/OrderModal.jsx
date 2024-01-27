@@ -11,6 +11,8 @@ import { useState } from 'react';
 import OrderDetails from './OrderDetails';
 import { mockedIngredients } from '../../mocks/mockedIngredients';
 import { mockedMenu } from '../../mocks/mockedMenu';
+import OrderOptions from './OrderOptions';
+import NumericKeypad from './NumericKeypad';
 
 function OrderModal({ isOpen, onClose, table }) {
   const [categories, setCategories] = useState(mockedCategories);
@@ -57,19 +59,44 @@ function OrderModal({ isOpen, onClose, table }) {
     }
   };
 
+  const applyDiscount = (discountValue, type) => {
+    if (!discountValue || isNaN(discountValue) || discountValue < 0) {
+      console.error('Valor de descuento inválido');
+      return;
+    }
+    const updatedOrder = currentOrder.map((item) => {
+      let discountAmount = 0;
+      if (type === 'percentage') {
+        discountAmount = (item.price * discountValue) / 100;
+      } else if (type === 'euro') {
+        discountAmount = discountValue / currentOrder.length;
+      }
+      const discountedPrice = Math.max(0, item.price - discountAmount);
+      return {
+        ...item,
+        price: discountedPrice,
+      };
+    });
+    setCurrentOrder(updatedOrder);
+  };
+
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={() => {}}
       hideCloseButton
       size="full"
-      className="p-4"
+      className="px-3"
     >
       <ModalContent>
         <ModalBody className="p-0">
           <div className="flex w-full">
             <div className="w-1/3 border-1">
-              <div className='w-full p-3'>
+              <div className="w-full p-3">
                 <h3 className="text-2xl">Comanda {table?.nombreMesa}</h3>
               </div>
               <OrderDetails
@@ -77,9 +104,10 @@ function OrderModal({ isOpen, onClose, table }) {
                 onIncrementQuantity={handleIncrementQuantity}
                 onDecrementQuantity={handleDecrementQuantity}
               />
+              <NumericKeypad onDiscountApplied={applyDiscount} />
             </div>
             <div className="w-2/3 ">
-              <div className="w-full flex flex-wrap gap-3 p-2 pl-7">
+              <div className="w-full flex flex-wrap gap-3 pl-7">
                 {Object.keys(categories)
                   .filter((category) => categories[category].salableCategory)
                   .map((category) => {
@@ -124,9 +152,9 @@ function OrderModal({ isOpen, onClose, table }) {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button auto flat color="error" onClick={onClose}>
-            Cerrar
-          </Button>
+          <div className="w-full ">
+            <OrderOptions onClose={() => handleClose()} />
+          </div>
         </ModalFooter>
       </ModalContent>
     </Modal>

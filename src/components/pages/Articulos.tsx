@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import ItemTable from '../Articulos/ItemTable';
 import AddItemModal from '../Articulos/AddItemModal';
 import { Button } from '@nextui-org/react';
@@ -9,13 +9,13 @@ import { mockedIngredients } from '../../mocks/mockedIngredients';
 import { mockedMenu } from '../../mocks/mockedMenu';
 import { mockedCategories } from '../../mocks/mockedCategories';
 
-const Articulos = () => {
-  const [items, setItems] = useState(mockedIngredients.concat(mockedMenu));
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [categories, setCategories] = useState(mockedCategories);
-  const [showItemModal, setShowItemModal] = useState(false);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+const Articulos: React.FC = () => {
+  const [items, setItems] = useState<Item[]>(mockedIngredients.concat(mockedMenu));
+  const [selectedItem, setSelectedItem] = useState<Item | undefined >();
+  const [categories, setCategories] = useState<Record<string, Category>>(mockedCategories);
+  const [showItemModal, setShowItemModal] = useState<boolean>(false);
+  const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     // Aquí iría la lógica para cargar los artículos desde la base de datos
@@ -40,7 +40,7 @@ const Articulos = () => {
     setCategories(newCategoriesState);
   };
 
-  const handleAddItem = (newItem) => {
+  const handleAddItem = (newItem: Item) => {
     if (selectedItem) {
       // Editar artículo existente
       setItems((prevItems) =>
@@ -54,14 +54,15 @@ const Articulos = () => {
       setItems((prevItems) => [...prevItems, newItem]);
     }
 
-    setSelectedItem(null);
+    setSelectedItem(undefined);
   };
 
-  const handleAddCategory = (newCategory) => {
+  const handleAddCategory = (newCategory: Category) => {
     setCategories((prevCategories) => ({
       ...prevCategories,
       [newCategory.name]: {
         id: newCategory.id,
+        name: newCategory.name,
         items: [],
         description: newCategory.description,
       },
@@ -70,20 +71,20 @@ const Articulos = () => {
   };
 
   const handleCloseModal = () => {
-    setSelectedItem(null);
+    setSelectedItem(undefined);
     setShowItemModal(false);
   };
 
-  const handleEditItem = (item) => {
+  const handleEditItem = (item: Item) => {
     setSelectedItem(item);
     setShowItemModal(true);
   };
 
-  const handleDeleteItem = (itemId) => {
+  const handleDeleteItem = (itemId: string) => {
     setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
-  const handleDuplicateItem = (itemToDuplicate) => {
+  const handleDuplicateItem = (itemToDuplicate: Item) => {
     const duplicatedItem = {
       ...itemToDuplicate,
       id: itemToDuplicate.id + '-copia',
@@ -93,11 +94,11 @@ const Articulos = () => {
     setItems((prevItems) => [...prevItems, duplicatedItem]);
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event:  ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const calculatePercentage = (category) => {
+  const calculatePercentage = (category: string) => {
     const totalItems = items.length;
     const itemsInCategory = categories[category].items.length;
     return (itemsInCategory / totalItems) * 100;

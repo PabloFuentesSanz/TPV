@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Modal,
   Input,
@@ -8,20 +9,30 @@ import {
   ModalHeader,
   ModalContent,
 } from '@nextui-org/react';
-import { useState } from 'react';
-export default function AddCategoryModal({ onClose, onSave, isOpen }) {
+
+interface AddCategoryModalProps {
+  onClose: () => void;
+  onSave: (category: Category) => void;
+  isOpen: boolean;
+}
+export default function AddCategoryModal({
+  onClose,
+  onSave,
+  isOpen,
+}: AddCategoryModalProps) {
   const [categoryName, setCategoryName] = useState('');
   const [categoryDescription, setCategoryDescription] = useState('');
 
-
   const handleSubmit = () => {
-    const newCategory = {
+    const newCategory: Category = {
       id: categoryName,
       name: categoryName,
-      description: categoryDescription
-    }
-    onSave(newCategory)
-  }
+      description: categoryDescription,
+      items: [],
+      img: ""
+    };
+    onSave(newCategory);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} hideCloseButton size="xl">
@@ -39,14 +50,14 @@ export default function AddCategoryModal({ onClose, onSave, isOpen }) {
             label="Descripción"
             value={categoryDescription}
             onChange={(e) => setCategoryDescription(e.target.value)}
-            minRows="6"
+            minRows={6}
           />
         </ModalBody>
         <ModalFooter>
-          <Button auto flat color="error" onClick={onClose}>
+          <Button color="danger" onClick={onClose}>
             Cerrar
           </Button>
-          <Button auto onClick={handleSubmit}>Guardar</Button>
+          <Button onClick={handleSubmit}>Guardar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

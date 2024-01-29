@@ -1,12 +1,6 @@
 import React from 'react';
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
+  Card
 } from '@nextui-org/react';
 import ComandaButtonCard from '../Home/ComandaButtonCard';
 import MesasProgressCard from '../Home/MesasProgressCard';

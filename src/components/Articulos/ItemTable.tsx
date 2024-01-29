@@ -17,10 +17,18 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditIcon from '@mui/icons-material/Edit';
 import { allergenImages } from '../../utils/allergens';
 import HeaderTable from './HeaderTable';
-import { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Switch } from '@nextui-org/react';
 
-const ItemTable = ({
+interface ItemTableProps {
+  items: Item[];
+  onDelete: (itemId: string) => void;
+  onDuplicate: (item: Item) => void;
+  onEdit: (item: Item) => void;
+  handleSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const ItemTable: React.FC<ItemTableProps> = ({
   items,
   onDelete,
   onDuplicate,
@@ -29,15 +37,15 @@ const ItemTable = ({
 }) => {
   const [page, setPage] = useState(0);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleDelete = (itemId) => {
+  const handleDelete = (itemId: string) => {
     onDelete(itemId);
   };
 
-  const handleDuplicate = (item) => {
+  const handleDuplicate = (item: Item) => {
     onDuplicate(item);
   };
 
@@ -48,20 +56,30 @@ const ItemTable = ({
         <Table>
           <TableHead className="bg-primary">
             <TableRow>
-              <TableCell><div className='text-white'>Imagen</div></TableCell>
-              <TableCell><div className='text-white'>Nombre</div></TableCell>
-              <TableCell><div className='text-white'>Alérgenos</div></TableCell>
-              <TableCell><div className='text-white'>PVP</div></TableCell>
-              <TableCell><div className='text-white'>Categorías</div></TableCell>
-              <TableCell><div className='text-white'>En Venta</div></TableCell>
+              <TableCell>
+                <div className="text-white">Imagen</div>
+              </TableCell>
+              <TableCell>
+                <div className="text-white">Nombre</div>
+              </TableCell>
+              <TableCell>
+                <div className="text-white">Alérgenos</div>
+              </TableCell>
+              <TableCell>
+                <div className="text-white">PVP</div>
+              </TableCell>
+              <TableCell>
+                <div className="text-white">Categorías</div>
+              </TableCell>
+              <TableCell>
+                <div className="text-white">En Venta</div>
+              </TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {items.length > 0 ? (
-             items
-             .slice(page * 5, page * 5 + 5)
-             .map((item) => (
+              items.slice(page * 5, page * 5 + 5).map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <img
@@ -103,7 +121,7 @@ const ItemTable = ({
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Switch isDisabled isSelected={item.salableItem}/>
+                    <Switch isDisabled isSelected={item.salableItem} />
                   </TableCell>
                   <TableCell>
                     <div className="flex content-between gap-4">

@@ -1,4 +1,4 @@
-import FloorPlanEditor from './components/PlanEditor/FloorPlanEditor';
+import FloorPlanEditor from './components/pages/FloorPlanEditor';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/pages/Home';

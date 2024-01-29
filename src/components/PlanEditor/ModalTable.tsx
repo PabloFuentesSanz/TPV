@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Modal,
   ModalContent,
@@ -9,33 +9,66 @@ import {
   Input,
 } from '@nextui-org/react';
 import { toast } from 'react-hot-toast';
-
-function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate }) {
-  const [formData, setFormData] = useState({
+interface ModalTableProps {
+  isOpen: boolean;
+  onClose: () => void;
+  tableData?: Table;
+  onSave: (formData: Table) => void;
+  onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
+}
+function ModalTable({
+  isOpen,
+  onClose,
+  tableData,
+  onSave,
+  onDelete,
+  onDuplicate,
+}: ModalTableProps) {
+  const [formData, setFormData] = useState<Table>({
+    id: '',
     nombreMesa: '',
     tipoMesa: '',
-    capacidad: '',
+    capacidad: 0,
+    position: { x: 0, y: 0 },
+    dimension: { width: 0, height: 0 },
   });
 
   useEffect(() => {
     if (tableData) {
       setFormData({
+        id: '',
         nombreMesa: tableData.nombreMesa || '',
         tipoMesa: tableData.tipoMesa || '',
-        capacidad: tableData.capacidad || '',
+        capacidad: tableData.capacidad || 0,
+        position: { x: 0, y: 0 },
+        dimension: { width: 0, height: 0 },
       });
     } else {
-      setFormData({ nombreMesa: '', tipoMesa: '', capacidad: '' });
+      setFormData({
+        id: '',
+        nombreMesa: '',
+        tipoMesa: '',
+        capacidad: 0,
+        position: { x: 0, y: 0 },
+        dimension: { width: 0, height: 0 },
+      });
     }
   }, [tableData, isOpen]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSave = () => {
-    if (!formData.nombreMesa || !formData.tipoMesa || (formData.tipoMesa !== 'muro' && !formData.capacidad)) {
+    if (
+      !formData.nombreMesa ||
+      !formData.tipoMesa ||
+      (formData.tipoMesa !== 'muro' && !formData.capacidad)
+    ) {
       toast.error('Por favor, completa todos los campos necesarios.');
       return;
     }
@@ -44,17 +77,21 @@ function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate 
   };
 
   const handleDelete = () => {
-    onDelete(tableData.id);
-    onClose();
+    if (tableData) {
+      onDelete(tableData.id);
+      onClose();
+    }
   };
 
   const handleDuplicate = () => {
-    onDuplicate(tableData.id);
-    onClose();
+    if (tableData) {
+      onDuplicate(tableData.id);
+      onClose();
+    }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={()=>{}} hideCloseButton>
+    <Modal isOpen={isOpen} onClose={() => {}} hideCloseButton>
       <ModalContent>
         <ModalHeader>{tableData ? 'Editar Mesa' : 'Añadir Mesa'}</ModalHeader>
         <ModalBody>
@@ -75,12 +112,13 @@ function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate 
             <option value="redonda">Mesa Redonda</option>
             <option value="muro">Muro</option>
           </select>
-          {(formData.tipoMesa == 'cuadrada' || formData.tipoMesa == 'redonda'  ) && (
+          {(formData.tipoMesa == 'cuadrada' ||
+            formData.tipoMesa == 'redonda') && (
             <Input
               label="Número de Comensales"
               name="capacidad"
               type="number"
-              value={formData.capacidad}
+              value={formData.capacidad?.toString()}
               onChange={handleChange}
             />
           )}
@@ -95,7 +133,10 @@ function ModalTable({ isOpen, onClose, tableData, onSave, onDelete, onDuplicate 
                 <Button color="danger" onPress={handleDelete}>
                   Borrar Mesa
                 </Button>
-                <Button onPress={handleDuplicate} className='bg-purple text-white'>
+                <Button
+                  onPress={handleDuplicate}
+                  className="bg-purple text-white"
+                >
                   Duplicar
                 </Button>
               </>

@@ -1,7 +1,13 @@
 // TableDisplay.jsx
+import React from 'react';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 
-const TableDisplay = ({ table, onTableClick }) => {
+interface TableDisplayProps {
+  table: Table;
+  onTableClick: (table: Table) => void;
+}
+
+const TableDisplay: React.FC<TableDisplayProps> = ({ table, onTableClick }) => {
   const { nombreMesa, tipoMesa, capacidad, position, dimension } = table;
   const isTable = tipoMesa !== 'muro';
 

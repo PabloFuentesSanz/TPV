@@ -1,18 +1,24 @@
+import React from 'react';
 import {
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Paper,
   LinearProgress,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
-function CategoriesTable({ categories, calculatePercentage }) {
-  
+interface CategoriesTableProps {
+  categories: Categories;
+  calculatePercentage: (category: string) => number;
+}
 
+function CategoriesTable({
+  categories,
+  calculatePercentage,
+}: CategoriesTableProps) {
   return (
     <>
       <TableContainer component={Paper}>
@@ -31,7 +37,7 @@ function CategoriesTable({ categories, calculatePercentage }) {
                     <LinearProgress
                       variant="determinate"
                       value={calculatePercentage(category)}
-                      className='w-[200px] p-2'
+                      className="w-[200px] p-2"
                     />
                   </TableCell>
                 </TableRow>

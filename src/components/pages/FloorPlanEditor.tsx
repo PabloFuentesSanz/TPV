@@ -1,25 +1,32 @@
 // FloorPlanEditor.js
-import { useState } from 'react';
-import DraggableTable from './DraggableTable';
+import React, { Key, useState } from 'react';
+import DraggableTable from '../PlanEditor/DraggableTable';
 import { Button, Tabs, Tab } from '@nextui-org/react';
-import ModalTable from './ModalTable';
-import AddSectionModal from './AddSectionModal';
+import ModalTable from '../PlanEditor/ModalTable';
+import AddSectionModal from '../PlanEditor/AddSectionModal';
 import { toast } from 'react-hot-toast';
 import { Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+
+interface FormData {
+  nombreMesa: string;
+  tipoMesa: string;
+  capacidad?: number;
+}
+
 const FloorPlanEditor = () => {
-  const [sections, setSections] = useState({});
-  const [selectedSection, setSelectedSection] = useState('');
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isNewSectionModalOpen, setIsNewSectionModalOpen] = useState(false);
-  const [newSectionName, setNewSectionName] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const [sections, setSections] = useState<Sections>({});
+  const [selectedSection, setSelectedSection] = useState<string>('');
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isNewSectionModalOpen, setIsNewSectionModalOpen] = useState<boolean>(false);
+  const [newSectionName, setNewSectionName] = useState<string>('');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   // Funciones para manipulación de mesas
-  const onDragStop = (tableId, d) => {
+  const onDragStop = (tableId: string, d: { x: number; y: number }) => {
     const updatedTables = sections[selectedSection].map((table) => {
       if (table.id === tableId) {
         return { ...table, position: { x: d.x, y: d.y } };
@@ -29,7 +36,7 @@ const FloorPlanEditor = () => {
     setSections({ ...sections, [selectedSection]: updatedTables });
   };
 
-  const onResizeStop = (tableId, size, position) => {
+  const onResizeStop = (tableId: string, size: { width: number; height: number }, position: { x: number; y: number }) => {
     const updatedTables = sections[selectedSection].map((table) => {
       if (table.id === tableId) {
         return { ...table, dimension: size, position };
@@ -47,7 +54,7 @@ const FloorPlanEditor = () => {
     setIsModalOpen(true);
   };
 
-  const saveTableData = (formData) => {
+  const saveTableData = (formData: FormData) => {
     // Validación de los datos del formulario
     if (
       !formData.nombreMesa.trim() ||
@@ -97,7 +104,7 @@ const FloorPlanEditor = () => {
     setSelectedTable(null); // Resetea la mesa seleccionada
   };
 
-  const deleteTable = (tableId) => {
+  const deleteTable = (tableId: string) => {
     const updatedTables = sections[selectedSection].filter(
       (table) => table.id !== tableId
     );
@@ -105,7 +112,7 @@ const FloorPlanEditor = () => {
     setIsModalOpen(false);
   };
 
-  const duplicateTable = (tableId) => {
+  const duplicateTable = (tableId: string) => {
     const sectionTables = sections[selectedSection];
     const tableToDuplicate = sectionTables.find(
       (table) => table.id === tableId
@@ -128,12 +135,12 @@ const FloorPlanEditor = () => {
     });
   };
 
-  const handleTableClick = (table) => {
+  const handleTableClick = (table: Table) => {
     setSelectedTable(table);
     setIsModalOpen(true);
   };
 
-  const addNewSection = (sectionName) => {
+  const addNewSection = (sectionName: string) => {
     if (sections[sectionName]) {
       toast.error('Ya existe una sección con ese nombre.');
       return;
@@ -143,7 +150,7 @@ const FloorPlanEditor = () => {
     setIsNewSectionModalOpen(false);
   };
 
-  const updateSection = (sectionName) => {
+  const updateSection = (sectionName: string) => {
     const updatedSections = { ...sections };
     updatedSections[sectionName] = updatedSections[selectedSection];
     delete updatedSections[selectedSection];
@@ -191,7 +198,7 @@ const FloorPlanEditor = () => {
     setIsNewSectionModalOpen(false);
   };
 
-  const handleTabChange = (key) => {
+  const handleTabChange = (key: Key) => {
     if (key === 'add') {
       setIsEditing(false);
       setNewSectionName('');
@@ -201,7 +208,7 @@ const FloorPlanEditor = () => {
       setNewSectionName(key);
       setIsNewSectionModalOpen(true);
     } else {
-      setSelectedSection(key);
+      setSelectedSection(key as string);
     }
   };
 
@@ -211,7 +218,7 @@ const FloorPlanEditor = () => {
   };
 
   // Simula guardar los datos en la API
-  const saveFloorPlanToAPI = async (floorPlanData) => {
+  const saveFloorPlanToAPI = async (floorPlanData: any) => {
     // Aquí harías la llamada POST a tu API
     console.log('Guardando plano...', floorPlanData);
     // Simula una respuesta de la API

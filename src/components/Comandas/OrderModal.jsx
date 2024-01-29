@@ -93,7 +93,7 @@ function OrderModal({ isOpen, onClose, table }) {
       className="px-3"
     >
       <ModalContent>
-        <ModalBody className="p-0">
+        <ModalBody className="p-0" style={{ maxHeight: '90vh', overflow: 'auto' }}>
           <div className="flex w-full">
             <div className="w-1/3 border-1">
               <div className="w-full p-3">

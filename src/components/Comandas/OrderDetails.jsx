@@ -10,7 +10,7 @@ const OrderDetails = ({ order, onIncrementQuantity, onDecrementQuantity }) => {
   };
 
   return (
-    <div className="h-[50vh]  overflow-y-auto">
+    <div className="h-[45vh]  overflow-y-auto">
       {order.length === 0 ? (
         <div className="flex w-full h-full justify-center items-center">
           <p>No hay artículos en la comanda.</p>

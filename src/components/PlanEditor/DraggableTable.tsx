@@ -2,7 +2,22 @@
 import React, { useState } from 'react';
 import { Rnd } from 'react-rnd';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
-const DraggableTable = ({ table, onDragStop, onResizeStop, onClick }) => {
+interface DraggableTableProps {
+  table: Table;
+  onDragStop: (id: string, position: { x: number; y: number }) => void;
+  onResizeStop: (
+    id: string,
+    size: { width: number; height: number },
+    position: { x: number; y: number }
+  ) => void;
+  onClick: (table: Table) => void;
+}
+const DraggableTable: React.FC<DraggableTableProps> = ({
+  table,
+  onDragStop,
+  onResizeStop,
+  onClick,
+}) => {
   const { id, nombreMesa, tipoMesa, capacidad, position, dimension } = table;
 
   const [hasMoved, setHasMoved] = useState(false);
@@ -69,11 +84,11 @@ const DraggableTable = ({ table, onDragStop, onResizeStop, onClick }) => {
         topLeft: true,
       }}
     >
-      <div className='flex flex-col gap-1' style={mesaStyle}>
+      <div className="flex flex-col gap-1" style={mesaStyle}>
         {nombreMesa} <br />
         {tipoMesa !== 'muro' && (
-          <div className='flex'>
-            <RestaurantIcon fontSize='small'/>
+          <div className="flex">
+            <RestaurantIcon fontSize="small" />
             {capacidad}
           </div>
         )}

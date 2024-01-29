@@ -1,4 +1,4 @@
-export const mockedIngredients = [
+export const mockedIngredients: Item[] = [
   {
     id: 'ing-001',
     name: 'Aceite de Oliva',

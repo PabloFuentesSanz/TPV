@@ -1,7 +1,11 @@
 import { Button, Input } from '@nextui-org/react';
 import SearchIcon from '@mui/icons-material/Search';
+import React, { ChangeEvent } from 'react';
 
-function HeaderTable({onSearchChange}) {
+interface HeaderTableProps {
+  onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+function HeaderTable({ onSearchChange }: HeaderTableProps) {
   return (
     <>
       <div className="flex justify-start gap-5 p-3 items-center mb-3">
@@ -37,10 +41,10 @@ function HeaderTable({onSearchChange}) {
             }
           />
         </div>
-        <Button className='bg-purple text-white'>Todos</Button>
-        <Button className='bg-purple text-white'>Activados</Button>
-        <Button className='bg-purple text-white'>Desactivados</Button>
-        <Button className='bg-purple text-white'>Ordenar</Button>
+        <Button className="bg-purple text-white">Todos</Button>
+        <Button className="bg-purple text-white">Activados</Button>
+        <Button className="bg-purple text-white">Desactivados</Button>
+        <Button className="bg-purple text-white">Ordenar</Button>
       </div>
     </>
   );

@@ -9,7 +9,19 @@ import {
 } from '@nextui-org/react';
 import React from 'react';
 import toast from 'react-hot-toast';
-// AddSectionModal.js
+
+interface AddSectionModalProps {
+  isOpen: boolean;
+  newSectionName: string;
+  onOpenChange: (isOpen: boolean) => void;
+  setNewSectionName: (name: string) => void;
+  addSection: (name: string) => void;
+  updateSection: (name: string) => void;
+  deleteSection: () => void;
+  duplicateSection: () => void;
+  isEditing: boolean;
+}
+
 function AddSectionModal({
   isOpen,
   newSectionName,
@@ -20,7 +32,7 @@ function AddSectionModal({
   deleteSection,
   duplicateSection,
   isEditing,
-}) {
+}: AddSectionModalProps) {
   // Maneja el guardado de una sección nueva o actualizada
   const handleSave = () => {
     if (!newSectionName.trim()) {
@@ -49,7 +61,7 @@ function AddSectionModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={()=>{}} hideCloseButton>
+    <Modal isOpen={isOpen} onClose={() => {}} hideCloseButton>
       <ModalContent>
         <ModalHeader>
           {isEditing ? 'Editar Sección' : 'Añadir Nueva Sección'}
@@ -63,8 +75,6 @@ function AddSectionModal({
         </ModalBody>
         <ModalFooter className="flex justify-between">
           <Button
-            auto
-            flat
             color="danger"
             variant="light"
             onClick={() => onOpenChange(false)}
@@ -76,12 +86,15 @@ function AddSectionModal({
               <Button color="danger" onClick={handleDelete}>
                 Borrar Sección
               </Button>
-              <Button className='bg-purple text-white'  onClick={handleDuplicate}>
+              <Button
+                className="bg-purple text-white"
+                onClick={handleDuplicate}
+              >
                 Duplicar
               </Button>
             </>
           )}
-          <Button auto color="primary" onClick={handleSave}>
+          <Button color="primary" onClick={handleSave}>
             {isEditing ? 'Guardar' : 'Añadir'}
           </Button>
         </ModalFooter>

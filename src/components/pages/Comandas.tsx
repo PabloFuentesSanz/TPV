@@ -1,15 +1,15 @@
 // Comandas.jsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Key } from 'react';
 import TableDisplay from '../Comandas/TableDisplay';
 import { Tabs, Tab } from '@nextui-org/react';
 import OrderModal from '../Comandas/OrderModal';
 
 const Comandas = () => {
-  const [sections, setSections] = useState([]);
-  const [selectedSection, setSelectedSection] = useState('');
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [openOrder, setOpenOrder] = useState(false);
-  
+  const [sections, setSections] = useState<Section[]>([]);
+  const [selectedSection, setSelectedSection] = useState<Key>('');
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [openOrder, setOpenOrder] = useState<boolean>(false);
+
   useEffect(() => {
     // Simulación de fetch de la API
     const fetchData = async () => {
@@ -257,17 +257,15 @@ const Comandas = () => {
     fetchData();
   }, []);
 
-  const handleTableClick = (table) => {
-    setSelectedTable(table)
+  const handleTableClick = (table: Table) => {
+    setSelectedTable(table);
     setOpenOrder(true);
   };
 
   const handleCloseModal = () => {
-    setSelectedTable(null)
-    setOpenOrder(false)
-
-  }
-
+    setSelectedTable(null);
+    setOpenOrder(false);
+  };
 
   const containerStyles = {
     overflow: 'auto',
@@ -285,7 +283,7 @@ const Comandas = () => {
       <div style={containerStyles}>
         <div className="workspace">
           <Tabs value={selectedSection} onSelectionChange={setSelectedSection}>
-            {sections.map((section) => (
+            {sections?.map((section) => (
               <Tab
                 key={section.sectionName}
                 value={section.sectionName}
@@ -307,7 +305,11 @@ const Comandas = () => {
             )}
         </div>
       </div>
-      <OrderModal isOpen={openOrder} onClose={() => handleCloseModal()} table={selectedTable} />
+      <OrderModal
+        isOpen={openOrder}
+        onClose={() => handleCloseModal()}
+        table={selectedTable}
+      />
     </div>
   );
 };

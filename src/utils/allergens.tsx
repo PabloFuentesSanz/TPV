@@ -12,8 +12,23 @@ import sesamoImg from '../assets/img/allergens/sesamo.png';
 import sulfitoImg from '../assets/img/allergens/sulfito.png';
 import altramuzImg from '../assets/img/allergens/altramuz.png';
 import moluscoImg from '../assets/img/allergens/molusco.png';
-
-export const allergenImages = {
+interface AllergenImages {
+  gluten: string;
+  crustaceos: string;
+  huevos: string;
+  pescado: string;
+  cacahuetes: string;
+  soja: string;
+  lacteos: string;
+  frutosCascara: string;
+  apio: string;
+  mostaza: string;
+  sesamo: string;
+  sulfitos: string;
+  altramuces: string;
+  moluscos: string;
+}
+export const allergenImages: AllergenImages  = {
     gluten: glutenImg,
     crustaceos: crustaceoImg,
     huevos: huevoImg,

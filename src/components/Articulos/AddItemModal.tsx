@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Modal,
   Input,
@@ -19,6 +19,7 @@ import {
   Chip,
   Box,
   Tooltip,
+  SelectChangeEvent,
 } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CloseIcon from '@mui/icons-material/Close';
@@ -26,7 +27,15 @@ import AddIcon from '@mui/icons-material/Add';
 import { allergenImages } from '../../utils/allergens';
 import { unitConversions, units } from '../../utils/units';
 
-const AddItemModal = ({
+interface AddItemModalProps {
+  onClose: () => void;
+  onSave: (item: Item) => void;
+  isOpen: boolean;
+  categories: Record<string, Category>;
+  selectedItem?: Item;
+  items: Item[];
+}
+const AddItemModal: React.FC<AddItemModalProps> = ({
   onClose,
   onSave,
   isOpen,
@@ -34,22 +43,22 @@ const AddItemModal = ({
   selectedItem,
   items,
 }) => {
-  const [itemName, setItemName] = useState('');
-  const [itemDescription, setItemDescription] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [itemPrice, setItemPrice] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
-  const [selectedAllergens, setSelectedAllergens] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [isElaborate, setIsElaborate] = useState(false);
-  const [ingredients, setIngredients] = useState([]);
-  const [supplierPrice, setSupplierPrice] = useState('');
-  const [supplierName, setSupplierName] = useState('');
-  const [stock, setStock] = useState(0);
-  const [reorderPoint, setReorderPoint] = useState(0);
-  const [unitOfMeasure, setUnitOfMeasure] = useState('');
-  const [salableItem, setSalableItem] = useState(true);
-  const [escandallo, setEscandallo] = useState(0.0);
+  const [itemName, setItemName] = useState<string>('');
+  const [itemDescription, setItemDescription] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [itemPrice, setItemPrice] = useState<number>(0);
+  const [imagePreview, setImagePreview] = useState<string | undefined>();
+  const [selectedAllergens, setSelectedAllergens] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isElaborate, setIsElaborate] = useState<boolean>(false);
+  const [ingredients, setIngredients] = useState<Ingredient[] | undefined>([]);
+  const [supplierPrice, setSupplierPrice] = useState<number>();
+  const [supplierName, setSupplierName] = useState<string>('');
+  const [stock, setStock] = useState<number>(0);
+  const [reorderPoint, setReorderPoint] = useState<number>(0);
+  const [unitOfMeasure, setUnitOfMeasure] = useState<string>('');
+  const [salableItem, setSalableItem] = useState<boolean>(true);
+  const [escandallo, setEscandallo] = useState<number>(0.0);
   useEffect(() => {
     if (selectedItem) {
       setItemName(selectedItem?.name);
@@ -70,12 +79,12 @@ const AddItemModal = ({
       setItemName('');
       setItemDescription('');
       setSelectedCategories([]);
-      setItemPrice('');
-      setImagePreview(null);
+      setItemPrice(0);
+      setImagePreview(undefined);
       setSelectedAllergens([]);
       setIsElaborate(false);
       setIngredients([]);
-      setSupplierPrice('');
+      setSupplierPrice(undefined);
       setSupplierName('');
       setStock(0);
       setReorderPoint(0);
@@ -90,28 +99,29 @@ const AddItemModal = ({
     }
   }, [ingredients]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.substr(0, 5) === 'image') {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file && file.type.startsWith('image')) {
       setImagePreview(URL.createObjectURL(file));
       setImageFile(file);
     } else {
-      setImagePreview(null);
+      setImagePreview(undefined);
       setImageFile(null);
     }
   };
 
   const handleSubmit = () => {
-    const newItem = {
+    const newItem: Item = {
       id: itemName,
       name: itemName,
       isElaborate: isElaborate,
       price: itemPrice, // Solo si está en la tpv
-      supplierPrice: supplierPrice, // Solo si es simple
+      supplierPrice: supplierPrice ?? 0.0, // Solo si es simple
       supplierName: supplierName, // Solo si es simple
       categories: selectedCategories,
       description: itemDescription,
-      imageUrl: imagePreview,
+      imageUrl: imagePreview ?? '',
+      imagePreview: undefined,
       selectedAllergens,
       ingredients: ingredients, // Solo si es elaborado (ingredientes es un array de ingrediente, ingrediente tiene nombre, cantidad, medida, merma)
       stock: stock, // Solo si es simple
@@ -123,41 +133,53 @@ const AddItemModal = ({
     onClose();
   };
 
-  const handleAllergenSelection = (allergen) => {
+  const handleAllergenSelection = (allergen: string) => {
     setSelectedAllergens((prevSelected) => {
       if (prevSelected.includes(allergen)) {
-        // Si ya está seleccionado, lo quitamos
         return prevSelected.filter((a) => a !== allergen);
       } else {
-        // Si no está seleccionado, lo añadimos
         return [...prevSelected, allergen];
       }
     });
   };
 
-  const handleChangeCategories = (event) => {
-    setSelectedCategories(event.target.value);
+  const handleChangeCategories = (event: SelectChangeEvent<string[]>) => {
+    setSelectedCategories(event.target.value as string[]);
   };
 
   const handleAddIngredientClick = () => {
-    setIngredients([
-      ...ingredients,
-      { name: '', amount: 1, unit: 'unidades', merma: 0 },
-    ]);
+    if (ingredients) {
+      setIngredients([
+        ...ingredients,
+        { name: '', amount: 1, unit: 'unidades', merma: 0 },
+      ]);
+    }
   };
 
-  const handleIngredientChange = (index, field, value) => {
-    const newIngredients = ingredients.map((ingredient, i) =>
-      i === index ? { ...ingredient, [field]: value } : ingredient
-    );
-    setIngredients(newIngredients);
+  const handleIngredientChange = (
+    index: number,
+    field: keyof Ingredient,
+    value: string | number
+  ) => {
+    if (ingredients) {
+      const newIngredients = ingredients.map((ingredient, i) =>
+        i === index ? { ...ingredient, [field]: value } : ingredient
+      );
+      setIngredients(newIngredients);
+    }
   };
 
-  const handleRemoveIngredient = (index) => {
-    setIngredients(ingredients.filter((_, i) => i !== index));
+  const handleRemoveIngredient = (index: number) => {
+    if (ingredients) {
+      setIngredients(ingredients.filter((_, i) => i !== index));
+    }
   };
 
-  const convertToPriceUnit = (amount, ingredientUnit, priceUnit) => {
+  const convertToPriceUnit = (
+    amount: number,
+    ingredientUnit: string,
+    priceUnit: string
+  ): number => {
     const conversionFunction = unitConversions[ingredientUnit];
     if (conversionFunction && ingredientUnit !== priceUnit) {
       return conversionFunction(amount);
@@ -166,22 +188,24 @@ const AddItemModal = ({
   };
 
   const calculateCostOfProduction = () => {
-    let totalCost = 0;
-    ingredients.forEach((ingredient) => {
-      const ingredientData = items.find(
-        (item) => item.name === ingredient.name
-      );
-      const convertedAmount = convertToPriceUnit(
-        ingredient.amount,
-        ingredient.unit,
-        ingredientData?.supplierPrice
-      );
-      const totalIngredientCost =
-        (ingredientData?.supplierPrice || 0) * convertedAmount;
-      const mermaAmount = totalIngredientCost * (ingredient.merma / 100);
-      totalCost += totalIngredientCost - mermaAmount;
-    });
-    setEscandallo(totalCost.toFixed(2));
+    if (ingredients) {
+      let totalCost = 0;
+      ingredients.forEach((ingredient) => {
+        const ingredientData = items.find(
+          (item) => item.name === ingredient.name
+        );
+        const convertedAmount = convertToPriceUnit(
+          ingredient.amount,
+          ingredient.unit,
+          ingredientData?.unitOfMeasure ?? ''
+        );
+        const totalIngredientCost =
+          (ingredientData?.supplierPrice || 0) * convertedAmount;
+        const mermaAmount = totalIngredientCost * (ingredient.merma / 100);
+        totalCost += totalIngredientCost - mermaAmount;
+      });
+      setEscandallo(parseFloat(totalCost.toFixed(2)));
+    }
   };
 
   return (
@@ -229,9 +253,10 @@ const AddItemModal = ({
             <>
               <div className="flex gap-5">
                 <Input
+                  type="number"
                   label="Precio de Compra al Proveedor (€)"
-                  value={supplierPrice}
-                  onChange={(e) => setSupplierPrice(e.target.value)}
+                  value={supplierPrice?.toString()}
+                  onChange={(e) => setSupplierPrice(parseFloat(e.target.value))}
                 />
                 <Input
                   label="Proveedor"
@@ -242,7 +267,7 @@ const AddItemModal = ({
                   <Input
                     label="Precio PVP (€)"
                     value={itemPrice}
-                    onChange={(e) => setItemPrice(e.target.value)}
+                    onChange={(e) => setItemPrice(parseFloat(e.target.value))}
                   />
                 )}
               </div>
@@ -286,8 +311,7 @@ const AddItemModal = ({
           ) : (
             <Input
               label="Precio PVP (€)"
-              value={itemPrice}
-              onChange={(e) => setItemPrice(e.target.value)}
+              onChange={(e) => setItemPrice(parseFloat(e.target.value))}
             />
           )}
           <div className="flex gap-5 items-center  w-full">
@@ -427,7 +451,7 @@ const AddItemModal = ({
           {isElaborate && (
             <>
               <div>
-                {ingredients.map((ingredient, index) => (
+                {ingredients?.map((ingredient, index) => (
                   <div key={index} className="ingredient-row">
                     <div className="flex gap-5 justify-center items-center">
                       <div className="w-1/2">
@@ -460,12 +484,12 @@ const AddItemModal = ({
                       </div>
                       <Input
                         type="number"
-                        value={ingredient.amount}
+                        value={ingredient.amount.toString()}
                         onChange={(e) =>
                           handleIngredientChange(
                             index,
                             'amount',
-                            e.target.value
+                            parseFloat(e.target.value)
                           )
                         }
                         label="Cantidad"
@@ -502,9 +526,13 @@ const AddItemModal = ({
                       </div>
                       <Input
                         type="number"
-                        value={ingredient.merma}
+                        value={ingredient.merma.toString()}
                         onChange={(e) =>
-                          handleIngredientChange(index, 'merma', e.target.value)
+                          handleIngredientChange(
+                            index,
+                            'merma',
+                            parseFloat(e.target.value)
+                          )
                         }
                         label="Merma (%)"
                         className="w-1/4"
@@ -529,10 +557,10 @@ const AddItemModal = ({
           )}
         </ModalBody>
         <ModalFooter>
-          <Button auto flat color="danger" onClick={onClose}>
+          <Button color="danger" onClick={onClose}>
             Cerrar
           </Button>
-          <Button auto color="primary" onClick={handleSubmit}>
+          <Button color="primary" onClick={handleSubmit}>
             Guardar
           </Button>
         </ModalFooter>

@@ -1,9 +1,7 @@
 import {
   Modal,
-  Button,
   ModalFooter,
   ModalBody,
-  ModalHeader,
   ModalContent,
 } from '@nextui-org/react';
 import { mockedCategories } from '../../mocks/mockedCategories';

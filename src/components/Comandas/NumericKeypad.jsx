@@ -49,7 +49,7 @@ function NumericKeypad({ onDiscountApplied }) {
       buttons.push(
         <Button
           key={number}
-          className="h-16"
+          className="h-16 rounded-md text-xl"
           onClick={() => handleButtonClick(number.toString())}
         >
           {number}
@@ -69,39 +69,39 @@ function NumericKeypad({ onDiscountApplied }) {
           style={{ marginBottom: '10px', textAlign: 'center' }}
         />
         <div className="flex gap-2">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 text-xl">
             {renderNumberButtons()}
             <Button
-              className="flex-grow h-16"
+              className="flex-grow h-16 rounded-md text-xl"
               onClick={() => handleButtonClick('0')}
             >
               0
             </Button>
             <Button
-              className="flex-grow h-16"
+              className="flex-grow h-16 rounded-md text-xl"
               onClick={() => handleButtonClick('.')}
             >
               .
             </Button>
-            <Button className="flex-grow h-16" onClick={deleteLastDigit}>
-              Borrar Último
+            <Button className="flex-grow h-16 rounded-md text-xl" onClick={deleteLastDigit}>
+              Borrar 1
             </Button>
           </div>
-          <div className="grid grid-cols-1">
+          <div className="grid grid-cols-1 gap-3 ">
             <Button
-              className="flex-grow h-24"
+              className="flex-grow h-full rounded-md text-xl"
               onClick={() => applyDiscount('percentage')}
             >
-              % Descuento
+              %
             </Button>
             <Button
-              className="flex-grow h-24"
+              className="flex-grow h-full rounded-md text-xl"
               onClick={() => applyDiscount('euro')}
             >
-              € Descuento
+              €
             </Button>
-            <Button className=" h-20" onClick={clearInput}>
-              Borrar Todo
+            <Button className=" h-full rounded-md text-xl" onClick={clearInput}>
+              Borrar
             </Button>
           </div>
         </div>

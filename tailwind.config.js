@@ -18,6 +18,9 @@ export default {
         purple: '#937Bd1',
         blue: '#5cc1d8',
       },
+      fontFamily: {
+        'bebas': ['Bebas Neue', 'sans-serif'],
+      },
     },
   },
   darkMode: 'class',
